@@ -1,0 +1,19 @@
+{
+  "name": "fireworks-theatre",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "An editable interactive fireworks theatre with a self-contained offline edition.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node tests/legacy-regression.cjs && node --test tests/*.test.mjs",
+    "format": "prettier --write src scripts tests docs index.html",
+    "check:format": "prettier --check src scripts tests"
+  },
+  "devDependencies": {
+    "@babel/parser": "8.0.8",
+    "esbuild": "0.28.2",
+    "prettier": "3.9.10"
+  }
+}

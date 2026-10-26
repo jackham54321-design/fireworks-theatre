@@ -1,0 +1,1531 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#060b16" />
+    <title>烟花剧场 · 让夜空回应你</title>
+    <!-- THEATRE_STYLE -->
+  </head>
+  <body>
+    <canvas
+      id="stage"
+      tabindex="0"
+      role="img"
+      aria-label="互动烟花夜空。轻点发射、长按蓄力、拖动绘星河；空格暂停，F 齐放，T 慢镜，H 隐藏控制。"
+    ></canvas>
+    <div class="chrome" id="chrome">
+      <div class="depth-frame" id="depthFrame" aria-hidden="true" hidden>
+        <span>IMMERSIVE DEPTH</span>
+      </div>
+      <header class="header">
+        <div class="brand">
+          <svg
+            class="brand-mark"
+            viewBox="0 0 40 40"
+            fill="none"
+            aria-hidden="true"
+          >
+            <g stroke="currentColor" stroke-width="1.1">
+              <path
+                d="M20 1v12m0 14v12M1 20h12m14 0h12M6.6 6.6l8.5 8.5m9.8 9.8l8.5 8.5M6.6 33.4l8.5-8.5m9.8-9.8l8.5-8.5"
+              />
+              <circle cx="20" cy="20" r="3" />
+            </g>
+          </svg>
+          <div>
+            <div class="eyebrow">The fireworks theater</div>
+            <h1>烟花剧场</h1>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button
+            class="icon-btn"
+            id="soundBtn"
+            aria-label="开启音效"
+            aria-pressed="false"
+            title="音效 · M"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M11 5 6 9H3v6h3l5 4z" />
+              <path id="soundWaves" d="m16 9 5 6m0-6-5 6" />
+            </svg>
+          </button>
+          <button
+            class="icon-btn immersive-button"
+            id="immersiveBtn"
+            aria-label="进入沉浸模式"
+            title="沉浸模式 · H"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 9V4h5m8 0h5v5M3 15v5h5m8 0h5v-5" />
+            </svg>
+          </button>
+          <button
+            class="icon-btn fullscreen-button"
+            id="fullscreenBtn"
+            aria-label="全屏观看"
+            title="全屏观看"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" />
+            </svg>
+          </button>
+          <div class="gesture-controls">
+            <button
+              class="camera-toggle"
+              id="cameraBtn"
+              aria-label="开启手势烟花"
+              aria-pressed="false"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 6 9.5 4h5L16 6h4v13H4V6z" />
+                <circle cx="12" cy="12" r="3" /></svg
+              ><span id="cameraLabel">手势烟花</span
+              ><i class="switch" aria-hidden="true"></i></button
+            ><button
+              class="gesture-help-trigger"
+              id="gestureGuideBtn"
+              aria-controls="gesturePanel"
+              aria-expanded="false"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M9 21v-3l-4-5c-1.5-2 0-3 1-2l2 2V6c0-2 2-2 2 0v5-7c0-2 2-2 2 0v7-6c0-2 2-2 2 0v7-4c0-2 2-2 2 0v6c0 3-2 4-2 7"
+                /></svg
+              >手势图解
+            </button>
+          </div>
+        </div>
+      </header>
+      <div class="chapter">
+        <div class="chapter-line">
+          <i class="live-dot"></i><span id="chapterName">序章</span
+          ><small id="showStatus">AUTO · 01</small
+          ><span class="slow-tag" id="slowTag" hidden>0.28×</span>
+        </div>
+        <div class="chapter-note" id="chapterNote">夜色初燃 · 金色华盖</div>
+      </div>
+      <aside class="poem" aria-label="让一瞬的光，照亮此刻的你">
+        让一瞬的光<br />照亮此刻的你<small>一场烟火 · 为你而来</small>
+      </aside>
+      <section
+        class="camera-card"
+        id="cameraCard"
+        aria-label="本机手势状态"
+        hidden
+      >
+        <div
+          class="camera-feed preview-hidden"
+          id="cameraFeed"
+          aria-hidden="true"
+        >
+          <video id="camera" autoplay playsinline muted></video
+          ><span class="camera-badge">LOCAL · 仅本机处理</span>
+        </div>
+        <p id="cameraStatus" role="status">正在开启摄像头…</p>
+        <div
+          class="camera-hold"
+          id="cameraHold"
+          role="progressbar"
+          aria-label="双掌齐放保持进度"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          hidden
+        >
+          <i></i>
+        </div>
+        <p id="cameraDisplayHint">画面与骨节已隐藏，点「显示设置」可开启。</p>
+        <div class="camera-card-actions">
+          <button
+            class="gesture-preview-help"
+            id="cameraDisplayBtn"
+            type="button"
+            aria-controls="settingsPanel"
+            aria-describedby="cameraDisplayHint"
+          >
+            显示设置</button
+          ><button
+            class="gesture-preview-help"
+            id="cameraGuideBtn"
+            type="button"
+            aria-controls="gesturePanel"
+          >
+            手势图解
+          </button>
+        </div>
+      </section>
+      <div class="sky-hint" id="skyHint">
+        <kbd>轻点</kbd>绽放<span>·</span><kbd>长按</kbd>蓄力<span>·</span
+        ><kbd>拖动</kbd>绘一笔星河
+      </div>
+      <div class="dock-wrap">
+        <nav class="programme-nav" aria-label="节目演出">
+          <button id="aliceStoryBtn" type="button">
+            <span class="programme-symbol" aria-hidden="true">♧</span
+            ><span>爱丽丝梦游仙境</span
+            ><small id="aliceProgrammeMeta">2D · 90 秒</small></button
+          ><button id="phoenixShowBtn" type="button">
+            <span class="programme-symbol" aria-hidden="true">✧</span
+            ><span>凤舞九天</span
+            ><small id="phoenixProgrammeMeta">2D · 22 秒</small></button
+          ><button
+            id="dragonShowBtn"
+            type="button"
+            aria-label="开演：飞龙在天，3D 东方龙，21.6 秒"
+            hidden
+          >
+            <span>飞龙在天</span><small>3D · 21.6 秒</small>
+          </button>
+        </nav>
+        <section class="dock" id="appearancePanel" aria-label="烟花外观">
+          <header class="mobile-appearance-header">
+            <h2>烟花外观</h2>
+            <button
+              class="close-btn"
+              type="button"
+              data-close
+              aria-label="收起外观面板"
+            >
+              ×
+            </button>
+          </header>
+          <div class="view-row">
+            <span class="row-label">空间维度</span>
+            <div class="view-options" role="group" aria-label="烟花空间模式">
+              <button id="view2dBtn" type="button" aria-pressed="true">
+                2D 平面</button
+              ><button
+                id="view3dBtn"
+                type="button"
+                aria-pressed="false"
+                title="立体透视 · 近景火花迎面飞来"
+              >
+                3D 临境
+              </button>
+            </div>
+            <span class="view-note" id="depthNote">夜空，由你点亮</span
+            ><button
+              class="depth-preview"
+              id="depthBurstBtn"
+              type="button"
+              title="手动释放一场迎面飞来的立体星雨"
+              hidden
+            >
+              穿屏星雨 ✦
+            </button>
+          </div>
+          <div class="control-row">
+            <span class="row-label">粒子效果</span>
+            <div class="options" role="group" aria-label="粒子效果">
+              <button class="option" data-effect="gold" aria-pressed="true">
+                <span class="effect-symbol" aria-hidden="true">✧</span
+                >金尘</button
+              ><button class="option" data-effect="star" aria-pressed="false">
+                <span class="effect-symbol" aria-hidden="true">✦</span
+                >星屑</button
+              ><button class="option" data-effect="frost" aria-pressed="false">
+                <span class="effect-symbol" aria-hidden="true">❄</span
+                >霜晶</button
+              ><button class="option" data-effect="petal" aria-pressed="false">
+                <span class="effect-symbol" aria-hidden="true">❀</span
+                >花瓣</button
+              ><button
+                class="option"
+                data-effect="butterfly"
+                aria-pressed="false"
+                title="成对光翼 · 振翅滑翔"
+              >
+                <span class="effect-symbol" aria-hidden="true">ʚɞ</span
+                >焰蝶</button
+              ><button
+                class="option"
+                data-effect="mix"
+                aria-pressed="false"
+                title="五种材质分层合奏 · 搭配流彩体验全光谱烟花"
+              >
+                <span class="effect-symbol" aria-hidden="true">✺</span>混合
+              </button>
+            </div>
+          </div>
+          <div class="control-row">
+            <span class="row-label">夜空配色</span>
+            <div class="options" role="group" aria-label="烟花颜色">
+              <button class="option" data-palette="gold" aria-pressed="true">
+                <i
+                  class="swatch"
+                  style="--swatch: linear-gradient(135deg, #fff6d1, #dfb56a)"
+                ></i
+                >暖金</button
+              ><button class="option" data-palette="blue" aria-pressed="false">
+                <i
+                  class="swatch"
+                  style="--swatch: linear-gradient(135deg, #ebfaff, #8ac7ef)"
+                ></i
+                >冰蓝</button
+              ><button class="option" data-palette="pink" aria-pressed="false">
+                <i
+                  class="swatch"
+                  style="--swatch: linear-gradient(135deg, #ffe4ee, #c398e9)"
+                ></i
+                >粉紫</button
+              ><button class="option" data-palette="red" aria-pressed="false">
+                <i
+                  class="swatch"
+                  style="
+                    --swatch: linear-gradient(
+                      135deg,
+                      #ffc0bc,
+                      #e64360,
+                      #a91739
+                    );
+                  "
+                ></i
+                >绯红</button
+              ><button class="option" data-palette="green" aria-pressed="false">
+                <i
+                  class="swatch"
+                  style="
+                    --swatch: linear-gradient(
+                      135deg,
+                      #cbffe2,
+                      #54e8a1,
+                      #109473
+                    );
+                  "
+                ></i
+                >翡翠</button
+              ><button
+                class="option"
+                data-palette="rainbow"
+                aria-pressed="false"
+              >
+                <i
+                  class="swatch"
+                  style="
+                    --swatch: conic-gradient(
+                      #ff6176,
+                      #ffd569,
+                      #51ebae,
+                      #60cfff,
+                      #b18aff,
+                      #ff6176
+                    );
+                  "
+                ></i
+                >流彩
+              </button>
+            </div>
+          </div>
+        </section>
+        <nav class="transport" aria-label="演出控制">
+          <button
+            id="appearanceBtn"
+            class="mobile-control"
+            type="button"
+            aria-expanded="false"
+            aria-controls="appearancePanel"
+          >
+            外观
+          </button>
+          <button
+            id="autoBtn"
+            aria-label="自动播放烟花"
+            aria-pressed="true"
+            title="关闭自动播放，只释放你手动点亮的烟花"
+          >
+            <span class="auto-switch" aria-hidden="true"></span
+            ><span id="autoLabel">自动开</span>
+          </button>
+          <button id="pauseBtn" aria-pressed="false" title="暂停 / 继续 · 空格">
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path id="pauseIcon" d="M7 5v10m6-10v10" /></svg
+            ><span id="pauseLabel">暂停</span><span class="key">␣</span>
+          </button>
+          <button id="finaleBtn" class="primary-action" title="烟花齐放 · F">
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path
+                d="m10 2 1.7 5.8L18 10l-6.3 2.1L10 18l-1.7-5.9L2 10l6.3-2.2z"
+              /></svg
+            >齐放<span class="key">F</span>
+          </button>
+          <button
+            id="writeBtn"
+            aria-expanded="false"
+            aria-controls="writePanel"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M3 4h14M10 4v13M6 17h8" /></svg
+            >写祝福
+          </button>
+          <button
+            id="settingsBtn"
+            aria-expanded="false"
+            aria-controls="settingsPanel"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M3 5h14M3 10h14M3 15h14" />
+              <circle cx="7" cy="5" r="2" fill="#101827" />
+              <circle cx="13" cy="10" r="2" fill="#101827" />
+              <circle cx="8" cy="15" r="2" fill="#101827" /></svg
+            >更多
+          </button>
+        </nav>
+      </div>
+      <section
+        class="popover"
+        id="writePanel"
+        aria-labelledby="writeTitle"
+        hidden
+      >
+        <header>
+          <h2 id="writeTitle">写给夜空</h2>
+          <button class="close-btn" data-close aria-label="关闭祝福面板">
+            ×
+          </button>
+        </header>
+        <p class="write-subtitle" id="wishIntro">
+          一字一朵礼花，依次升空绽放。<br />让星环、花雨和流光，为你的祝福伴演。
+        </p>
+        <form id="wishForm">
+          <input
+            class="text-input"
+            id="wishInput"
+            aria-label="祝福文字"
+            maxlength="40"
+            placeholder="例如：愿你所愿 皆能如愿"
+            autocomplete="off"
+          />
+          <div class="write-meta">
+            <span>建议 2–12 个字</span><span id="wishCount">0 / 12</span>
+          </div>
+          <button class="gold-button" id="wishSubmit" disabled>
+            让祝福绽放
+          </button>
+        </form>
+        <button id="wishStop" class="wish-stop" type="button" hidden>
+          结束这一场，重新写祝福
+        </button>
+        <p class="help-copy">
+          整句成形后会停留片刻，再散入星河。文字只在当前页面绘制，不发送到服务器。
+        </p>
+      </section>
+      <section
+        class="popover"
+        id="settingsPanel"
+        aria-labelledby="settingsTitle"
+        hidden
+      >
+        <header>
+          <h2 id="settingsTitle">导演这一场烟火</h2>
+          <button class="close-btn" data-close aria-label="关闭设置面板">
+            ×
+          </button>
+        </header>
+        <div class="viewing-controls">
+          <p>横放手机，展开整片夜空</p>
+          <button type="button" id="landscapeBtn" aria-pressed="false">
+            横屏观看
+          </button>
+        </div>
+        <button
+          class="score-button"
+          type="button"
+          id="settingsGestureBtn"
+          aria-controls="gesturePanel"
+        >
+          手势图解 · 看一遍就会摆
+        </button>
+        <div class="sound-card">
+          <div class="mini-title">夜空的声音</div>
+          <label class="inline-toggle"
+            >声音总开关<input id="soundInput" type="checkbox"
+          /></label>
+          <div class="score-title" id="scoreTitle">Moonlight</div>
+          <p class="score-subtitle" id="scoreSubtitle">
+            Scott Buckley · 钢琴与弦乐
+          </p>
+          <label class="inline-toggle"
+            >随表演更换配乐<input id="scoreAutoInput" type="checkbox" checked
+          /></label>
+          <button
+            type="button"
+            class="score-button"
+            id="musicBtn"
+            aria-pressed="false"
+          >
+            播放配乐
+          </button>
+          <p
+            class="sound-status"
+            id="musicStatus"
+            role="status"
+            aria-live="polite"
+          >
+            轻触开启，让月光为夜空伴奏。
+          </p>
+          <div class="field">
+            <label for="musicVolume"
+              >配乐音量<output id="musicVolumeValue">50%</output></label
+            ><input
+              id="musicVolume"
+              type="range"
+              min="0"
+              max="100"
+              value="50"
+              step="1"
+            />
+          </div>
+          <label class="inline-toggle"
+            >烟花音效<input id="effectsInput" type="checkbox" checked
+          /></label>
+          <div class="field">
+            <label for="effectsVolume"
+              >烟花音量<output id="effectsVolumeValue">80%</output></label
+            ><input
+              id="effectsVolume"
+              type="range"
+              min="0"
+              max="100"
+              value="80"
+              step="1"
+            />
+          </div>
+          <details class="music-credit">
+            <summary>关于与源码</summary>
+            <p>
+              这一场烟火，也可以由你继续创作。导出后可修改源码与素材，重新生成网页或离线单文件。
+            </p>
+            <button type="button" id="exportSourceBtn">导出可编辑工程</button>
+            <p id="sourceExportStatus" role="status"></p>
+            <!-- THEATRE_NOTICES -->
+          </details>
+          <details class="music-credit">
+            <summary>音乐来源与授权</summary>
+            <p>
+              Music by
+              <a
+                href="https://www.scottbuckley.com.au"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Scott Buckley</a
+              >
+              — released under
+              <a
+                href="https://creativecommons.org/licenses/by/4.0/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >CC BY 4.0</a
+              >.
+            </p>
+            <p id="scoreCredits"></p>
+            <p>
+              本地播放 · 128 kbps MP3 ·
+              转码与音量均衡；表演从选定乐段起播，使用交叉淡化，速度与音高不变。烟花音效包含本地合成与用户提供的录音片段。
+            </p>
+          </details>
+        </div>
+        <div class="mini-title">烟花，也能演一场戏</div>
+        <div class="mini-title">夜空里的奇遇</div>
+        <div class="inspiration-grid">
+          <button type="button" id="heartBtn">
+            <b aria-hidden="true">♡</b>心动时刻</button
+          ><button type="button" id="orbitBtn">
+            <b aria-hidden="true">♄</b>星环之约</button
+          ><button type="button" id="meteorBtn">
+            <b aria-hidden="true">☄</b>流星许愿
+          </button>
+        </div>
+        <label class="inline-toggle"
+          >时光慢镜 · 0.28 倍速<input id="slowInput" type="checkbox"
+        /></label>
+        <p class="help-copy">把绽放放慢，细看每一片晶体与花瓣。快捷键 T。</p>
+        <div class="divider"></div>
+        <label class="inline-toggle"
+          >自动演出<input id="autoInput" type="checkbox" checked
+        /></label>
+        <label class="inline-toggle"
+          >曲线轨迹<input
+            id="trajectoryInput"
+            type="checkbox"
+            aria-describedby="trajectoryHelp"
+        /></label>
+        <p class="help-copy" id="trajectoryHelp">
+          默认从不同方向直线飞入。开启后，新发射的焰弹可沿弧线、S
+          形或螺旋飞近，祝福焰弹也会遵循。
+        </p>
+        <div class="field">
+          <label for="densityInput"
+            >烟花密度<output id="densityValue">适中</output></label
+          ><input
+            id="densityInput"
+            type="range"
+            min="1"
+            max="3"
+            value="2"
+            step="1"
+          />
+        </div>
+        <div class="field">
+          <label for="qualityInput">画面质量</label
+          ><select id="qualityInput">
+            <option value="auto">自适应 · 推荐</option>
+            <option value="high">细腻 · 更多粒子</option>
+            <option value="low">轻盈 · 节省性能</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="windInput"
+            >晚风方向<output id="windValue">微风</output></label
+          ><input
+            id="windInput"
+            type="range"
+            min="-1"
+            max="1"
+            step=".1"
+            value=".2"
+          />
+          <p>让花瓣与霜晶，随你拨动的晚风飘落。</p>
+        </div>
+        <div class="divider"></div>
+        <div class="mini-title">手势显示</div>
+        <label class="inline-toggle gesture-display-toggle"
+          >显示摄像头画面<input
+            type="checkbox"
+            id="previewInput"
+            aria-describedby="cameraDisplayHelp"
+        /></label>
+        <label class="inline-toggle gesture-display-toggle"
+          >显示手势骨节<input
+            type="checkbox"
+            id="skeletonInput"
+            aria-describedby="cameraDisplayHelp"
+        /></label>
+        <p class="help-copy" id="cameraDisplayHelp">
+          两项默认关闭，可独立开启。隐藏画面或骨节不影响手势识别；画面仅在本机处理。
+        </p>
+        <div class="divider"></div>
+        <p class="help-copy">
+          轻点夜空发射；长按后松手，释放蓄力礼花；拖动后松手，让烟花沿你画的星河逐一点亮。手势模型需联网加载，画面在本机处理。Enter
+          发射，空格暂停，F 齐放，T 慢镜，M 音效，H 沉浸，Esc 收起。
+        </p>
+      </section>
+      <section
+        class="popover"
+        id="gesturePanel"
+        aria-labelledby="gestureTitle"
+        hidden
+      >
+        <header>
+          <h2 id="gestureTitle">手势图解</h2>
+          <div class="gesture-panel-actions">
+            <span class="gesture-static-note">静态示意</span
+            ><button
+              class="gesture-motion-button"
+              id="gestureMotionBtn"
+              type="button"
+              aria-pressed="false"
+            >
+              暂停示范</button
+            ><button class="close-btn" data-close aria-label="关闭手势图解">
+              ×
+            </button>
+          </div>
+        </header>
+        <p class="gesture-intro">
+          手掌或手背正对镜头，距离约 40–80 cm。左右手都可以。
+        </p>
+        <div class="gesture-tabs" role="group" aria-label="选择手势图解">
+          <button
+            type="button"
+            id="gestureOpenChoice"
+            data-gesture-guide="open"
+            aria-pressed="true"
+            aria-controls="gestureDemoOpen"
+          >
+            <span>01</span>张掌
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="point"
+            aria-pressed="false"
+            aria-controls="gestureDemoPoint"
+          >
+            <span>02</span>食指
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="peace"
+            aria-pressed="false"
+            aria-controls="gestureDemoPeace"
+          >
+            <span>03</span>比耶
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="pinch"
+            aria-pressed="false"
+            aria-controls="gestureDemoPinch"
+          >
+            <span>04</span>捏合
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="fingerheart"
+            aria-pressed="false"
+            aria-controls="gestureDemoFingerheart"
+          >
+            <span>05</span>比心
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="dj"
+            aria-pressed="false"
+            aria-controls="gestureDemoDj"
+          >
+            <span>06</span>DJ
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="thumbsup"
+            aria-pressed="false"
+            aria-controls="gestureDemoThumbsup"
+          >
+            <span>07</span>点赞
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="shaka"
+            aria-pressed="false"
+            aria-controls="gestureDemoShaka"
+          >
+            <span>08</span>六
+          </button>
+          <button
+            type="button"
+            data-gesture-guide="both"
+            aria-pressed="false"
+            aria-controls="gestureDemoBoth"
+          >
+            <span>09</span>双掌
+          </button>
+        </div>
+        <svg
+          class="gesture-symbols"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <linearGradient
+              id="gestureSkin"
+              x1=".15"
+              y1="0"
+              x2=".8"
+              y2="1"
+              gradientUnits="objectBoundingBox"
+            >
+              <stop stop-color="#f6ddc0" />
+              <stop offset=".48" stop-color="#d9b194" />
+              <stop offset="1" stop-color="#b88b75" />
+            </linearGradient>
+            <g id="gestureHandOpen">
+              <path
+                class="gesture-hand-surface"
+                d="M103 237 100 204C84 199 76 188 69 175L44 141C37 132 39 123 46 121S59 125 64 132L82 151 66 72C63 59 67 51 74 50S87 57 89 68L102 121 98 40C98 27 103 21 111 22S124 29 124 41L126 113 135 48C137 35 143 31 150 33S160 44 158 55L150 124 170 85C175 75 182 75 187 80S191 93 187 101L173 152C176 175 170 193 160 204L160 237Z"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="M85 150c5 10 11 13 19 15m-7 18c11-17 29-24 49-17m-39 29c14 3 26-1 36-8M78 93l10-2m17-31h13m19 22 13 2m17 24 11 4M106 226l48-1"
+              />
+              <path
+                class="gesture-finger-emphasis"
+                d="m77 66 9 41m25-67 3 50m32-41-5 42m38 1-13 30"
+              />
+            </g>
+            <g id="gestureHandPoint">
+              <path
+                class="gesture-hand-surface"
+                d="m102 237-4-34c-14-9-24-24-26-43l4-27c1-9 7-14 14-12L88 48c-1-13 4-21 12-21s14 9 14 21l3 66c7-8 16-7 23 1 8-4 16 0 20 9 9 0 15 7 15 18l1 24c0 19-7 32-17 39v32Z"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="m99 93 13-1m9 29 6 18m17-17 6 15m12-5 6 13m-64 57 1-42m18 38 4-41m-17 69 42-1"
+              />
+              <path class="gesture-finger-emphasis" d="m99 59 3 21" />
+              <rect
+                class="gesture-nail"
+                x="94"
+                y="34"
+                width="13"
+                height="20"
+                rx="6"
+              />
+            </g>
+            <g id="gestureHandPeace">
+              <path
+                class="gesture-hand-surface"
+                d="m102 237-4-34c-16-8-26-23-27-42l8-24L62 65c-4-13 0-22 8-24s15 6 18 18l17 55c3 7 9 7 11-1l11-69c2-13 8-20 16-18s11 11 9 23l-12 73c8-6 18-2 22 7 9 1 14 8 14 18l-1 20c-1 17-7 29-16 38v32Z"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="m81 88 12-4m40-13 13 2m-4 58 7 14m14-6 5 13m-63 49 2-43m18 42 5-41m-23 67 45-1"
+              />
+              <path
+                class="gesture-finger-emphasis"
+                d="m77 67 13 42m48-84-9 56"
+              />
+              <rect
+                class="gesture-nail"
+                x="68"
+                y="46"
+                width="12"
+                height="19"
+                rx="5"
+                transform="rotate(-15 74 55)"
+              />
+              <rect
+                class="gesture-nail"
+                x="132"
+                y="31"
+                width="12"
+                height="20"
+                rx="5"
+                transform="rotate(9 138 41)"
+              />
+            </g>
+            <g id="gestureHandPinch">
+              <path
+                class="gesture-hand-surface"
+                fill-rule="evenodd"
+                d="M103 237 100 203C84 198 71 186 64 169L47 151C36 140 31 128 33 113 35 97 44 83 59 80 74 80 84 90 95 110L111 112 109 40C109 28 114 21 122 22S135 30 135 42L135 101 148 53C151 41 159 36 166 40S174 53 170 64L156 114 179 89C186 81 194 84 197 91S196 105 190 113L175 154C177 177 170 194 160 204L160 237ZM62 104C51 103 48 110 51 120 54 130 62 137 71 139 78 140 85 135 86 128 86 120 81 114 75 109 71 106 67 104 62 104Z"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="m116 62 12 1m20 19 12 3m14 34 9 5M94 114c-3 9-5 17-14 24m-15 25c16 2 28-6 36-20m14-17c10-1 19 4 25 11m-35 57c18 4 30-3 39-14m-38 44h48"
+              />
+              <path
+                class="gesture-finger-emphasis"
+                d="m122 38 1 53m35-36-13 45m41 2-16 25"
+              />
+            </g>
+            <g id="gestureHandFingerheart">
+              <path
+                class="gesture-hand-surface"
+                d="m101 237-6-33c-18-10-28-27-26-47l5-32c2-11 9-17 18-13l-14-43c-5-12-3-20 4-23s15 3 20 13l24 44c8-2 17 4 22 13l21 40c9 16 7 34-7 47l-2 34Z"
+              />
+              <path
+                class="gesture-hand-surface"
+                d="m90 112 25 25c8 8 8 18 1 22s-15 0-22-7l-18-19c-8-8-7-16-1-21s10-4 15 0Zm-14 27 22 22c8 8 9 16 2 21s-16 0-22-7l-12-16c-7-8-5-16 1-20s6-2 9 0Zm-6 30 19 17c8 7 9 15 3 20s-15 1-21-5l-11-12c-7-8-5-16 1-20s6-2 9 0Z"
+              />
+              <path
+                class="gesture-hand-surface"
+                d="M157 201c15-16 17-32 6-51l-23-37c-8-13-11-24-10-37l1-15c1-10-3-16-10-16s-12 7-14 17l-4 24c-3 15 1 28 10 40l10 18c-9 19-7 39 8 55"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="m85 88 14-6m13 13 15 2m-8 42c-7 15-6 32 3 45m-30 31c10 3 18 1 24-4m-13 14 49-1"
+              />
+              <path
+                class="gesture-finger-emphasis"
+                d="m87 56 15 27m20-28-2 21"
+              />
+              <path
+                class="gesture-nail"
+                d="M119 49c6-1 9 3 8 11l-1 11c-1 4-8 4-10 0l1-15c0-4 0-6 2-7Z"
+              />
+            </g>
+            <g id="gestureHandDj">
+              <path
+                class="gesture-hand-surface"
+                d="m102 237-4-34c-19-7-30-21-35-39L29 133c-8-8-7-17 0-21s14 0 20 6l28 22-7-88c-1-13 4-21 12-21s14 7 14 20l7 69c7-7 16-5 22 3 8-6 16-3 20 7l12-64c2-12 8-18 15-16s11 11 9 22l-11 91c1 18-4 31-15 41v33Z"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="m103 148 6-3m13 5 6-3m12 7 6-3m-40 44 3-15m13 16 2-16"
+              />
+              <path
+                class="gesture-finger-emphasis"
+                d="m82 45 5 62m82-44-11 62m-124-7 25 23"
+              />
+              <rect
+                class="gesture-nail"
+                x="77"
+                y="37"
+                width="10"
+                height="18"
+                rx="4"
+              />
+              <rect
+                class="gesture-nail"
+                x="166"
+                y="56"
+                width="10"
+                height="16"
+                rx="4"
+                transform="rotate(9 171 64)"
+              />
+            </g>
+            <g id="gestureHandThumbsup">
+              <path
+                class="gesture-hand-surface"
+                d="m105 237-5-26c-21-7-36-23-37-44l2-33c0-17 12-28 30-28l36 1c-7-15-18-26-20-40-2-12 0-24 5-33 5-8 13-10 19-5s7 13 4 23c-3 10 1 18 8 26l17 25c10 14 15 30 15 47l-1 43 8 44Z"
+              />
+              <path
+                class="gesture-hand-surface"
+                d="m93 108 29 5c13 2 21 10 18 20s-14 11-25 8l-32-5c-14-2-22-10-18-19s14-11 28-9Zm-12 29 35 6c13 2 21 10 17 20s-15 11-27 8l-26-5c-14-2-22-10-18-19s8-12 19-10Zm-2 30 31 5c13 2 20 9 17 18s-14 11-26 8l-19-4c-14-3-21-9-17-18s5-11 14-9Zm4 28 20 4c12 2 18 9 14 16s-15 9-26 5l-8-3c-13-4-18-9-14-16s6-7 14-6Z"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="m120 69 15 1m8 38c-10 17-11 39-4 58m-23 25c10-6 16-14 19-24m-20 58 53-1"
+              />
+              <path class="gesture-finger-emphasis" d="m125 39-1 16" />
+              <path
+                class="gesture-nail"
+                d="M124 32c7-2 11 2 10 9l-2 12c-1 5-8 6-11 1l1-14c0-4 0-7 2-8Z"
+              />
+            </g>
+            <g id="gestureHandShaka">
+              <path
+                class="gesture-hand-surface"
+                d="m101 237-4-35c-17-6-29-22-33-39l-35-30c-8-8-8-17-1-21s14-1 20 5l29 22-4-21c-2-11 3-17 11-18s15 5 17 15c7-8 17-5 21 5 9-6 18-1 21 8l16-63c3-12 9-17 16-14s9 12 6 23l-12 88c0 19-5 32-15 41v34Z"
+              />
+              <path
+                class="gesture-hand-crease"
+                d="m103 148 6-3m13 5 6-3m12 7 6-3m-40 44 3-15m13 16 2-16"
+              />
+              <path
+                class="gesture-finger-emphasis"
+                d="m34 123 27 23m110-81-13 61"
+              />
+              <rect
+                class="gesture-nail"
+                x="168"
+                y="57"
+                width="10"
+                height="16"
+                rx="4"
+                transform="rotate(11 173 65)"
+              />
+            </g>
+          </defs>
+        </svg>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoOpen"
+          data-gesture-demo="open"
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="五指伸直分开，手掌正面朝向镜头"
+            >
+              <path
+                class="guide-mark"
+                d="M38 57V35h23m198 0h23v22M38 205v22h23m198 0h23v-22"
+              />
+              <g transform="translate(34 2)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandOpen" />
+                  <circle
+                    class="gesture-halo gesture-animated"
+                    cx="125"
+                    cy="158"
+                    r="34"
+                  />
+                  <path
+                    class="gesture-effect gesture-animated"
+                    d="m124 135 0-9m0 64v-9m-27-22h-9m73 0h-10m-46-20-7-7m52 51-7-7m-39 0-7 7m53-51-7 7"
+                  />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">01 / 09 · 单手</span>
+            <h3>张开手掌</h3>
+            <p class="gesture-instruction">
+              五指伸直、自然分开。<br />掌心正对镜头，不要侧着手。
+            </p>
+            <strong class="gesture-result">掌心绽放球形礼花</strong>
+            <p class="gesture-detail">
+              礼花向四面八方扩散。移动手掌，改变绽放的位置。
+            </p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoPoint"
+          data-gesture-demo="point"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="用户视角：手背可见，只伸直食指，拇指和另外三指收拢"
+            >
+              <g transform="translate(38 2)">
+                <g class="pose-sway pose-point gesture-animated">
+                  <use href="#gestureHandPoint" />
+                  <path
+                    class="gesture-comet gesture-animated"
+                    d="M207 105Q177 46 104 25"
+                    fill="none"
+                  />
+                  <circle
+                    class="gesture-halo gesture-animated"
+                    cx="102"
+                    cy="28"
+                    r="13"
+                  />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">02 / 09 · 你的视角</span>
+            <h3>食指指向</h3>
+            <p class="gesture-instruction">
+              只伸直食指。<br />拇指和另外三指收拢在掌心。
+            </p>
+            <strong class="gesture-result">烟花飞向你的指尖</strong>
+            <p class="gesture-detail">把指尖移到想点亮的位置，稍作停留。</p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoPeace"
+          data-gesture-demo="peace"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="用户视角：手背可见，食指中指张成V字，另外三指收起"
+            >
+              <g transform="translate(38 2)">
+                <g class="pose-sway pose-peace gesture-animated">
+                  <use href="#gestureHandPeace" />
+                  <ellipse
+                    class="gesture-halo gesture-animated"
+                    cx="124"
+                    cy="157"
+                    rx="71"
+                    ry="23"
+                    transform="rotate(-6 124 157)"
+                  />
+                  <ellipse
+                    class="gesture-halo gesture-animated"
+                    cx="124"
+                    cy="157"
+                    rx="53"
+                    ry="18"
+                    transform="rotate(86 124 157)"
+                    style="animation-delay: 0.35s"
+                  />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">03 / 09 · 你的视角</span>
+            <h3>比个耶</h3>
+            <p class="gesture-instruction">
+              食指、中指伸直，分成 V 字。<br />无名指、小指收起，拇指轻压。
+            </p>
+            <strong class="gesture-result">点亮两道旋转星环</strong>
+            <p class="gesture-detail">
+              一横一竖的双环相向旋转，近大远小。两个指尖分开。
+            </p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoPinch"
+          data-gesture-demo="pinch"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="拇指与食指指尖轻轻捏合，其他手指自然放松，伸展或弯曲均可"
+            >
+              <g transform="translate(34 2)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandPinch" />
+                  <circle
+                    class="gesture-contact gesture-pinch-index gesture-animated"
+                    cx="89"
+                    cy="126"
+                    r="2"
+                  />
+                  <circle
+                    class="gesture-contact gesture-pinch-thumb gesture-animated"
+                    cx="88"
+                    cy="129"
+                    r="2"
+                  />
+                  <g class="pinch-contact gesture-animated">
+                    <circle class="gesture-contact" cx="88" cy="128" r="4" />
+                    <path
+                      d="m75 110-6-6m33 8 6-6m-7 35 6 6m-33-5-6 6"
+                      fill="none"
+                      stroke="#f1d69e"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                    />
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">04 / 09 · 单手</span>
+            <h3>指尖捏合</h3>
+            <p class="gesture-instruction">
+              拇指和食指指尖轻轻碰拢。<br />其他手指自然放松，弯曲也可以。
+            </p>
+            <strong class="gesture-result">指尖流淌细碎火花</strong>
+            <p class="gesture-detail">保持捏合并慢慢移动，火花会跟随手指。</p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoBoth"
+          data-gesture-demo="both"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="双手同时张开五指，两个掌心都朝向镜头，保持0.8秒"
+            >
+              <g transform="translate(0 29) scale(.73)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandOpen" />
+                </g>
+              </g>
+              <g transform="translate(320 29) scale(-.73 .73)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandOpen" />
+                </g>
+              </g>
+              <circle class="gesture-hold-track" cx="160" cy="128" r="14.5" />
+              <circle
+                class="gesture-hold gesture-animated"
+                cx="160"
+                cy="128"
+                r="14.5"
+              />
+              <path
+                class="gesture-effect gesture-animated"
+                d="m156 127 3 3 7-7"
+              />
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">09 / 09 · 双手</span>
+            <h3>双掌齐放</h3>
+            <p class="gesture-instruction">
+              两只手同时张掌，掌心朝前。<br />双手都入镜，保持约 0.8 秒。
+            </p>
+            <strong class="gesture-result">触发全场烟花齐放</strong>
+            <p class="gesture-detail">
+              双手留些间距。齐放后先收起双掌，再次触发需间隔约 7 秒。
+            </p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoFingerheart"
+          data-gesture-demo="fingerheart"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="用户视角：掌心可见，食指在后，拇指在前交叉，另外三指收起"
+            >
+              <g transform="translate(38 2)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandFingerheart" />
+                  <path
+                    class="gesture-effect gesture-animated"
+                    d="M112 36c-20-20-41 7 0 28 41-21 20-48 0-28Z"
+                    fill="#f3a9ba30"
+                    stroke="#f3a9ba"
+                  />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">05 / 09 · 你的视角</span>
+            <h3>交叉比心</h3>
+            <p class="gesture-instruction">
+              手背朝镜头，另外三指收起。<br />较短的拇指在食指后侧交叉。
+            </p>
+            <strong class="gesture-result">玫瑰金双心花火</strong>
+            <p class="gesture-detail">
+              稳住交叉处，点亮双心；3D 模式下双心前后交织旋转。
+            </p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoDj"
+          data-gesture-demo="dj"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="手背朝镜头，拇指食指小指伸直张开，中指无名指弯曲收在掌心"
+            >
+              <g transform="translate(38 2)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandDj" />
+                  <path
+                    class="gesture-effect gesture-animated"
+                    d="M184 153v-21m10 32v-47m10 38v-29m10 40v-60"
+                    stroke="#8be3ed"
+                    stroke-width="3"
+                  />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">06 / 09 · 单手</span>
+            <h3>DJ 手势</h3>
+            <p class="gesture-instruction">
+              手背朝镜头，展开拇指、食指、小指。<br />中指、无名指弯曲收起。
+            </p>
+            <strong class="gesture-result">青紫霓虹音浪</strong>
+            <p class="gesture-detail">
+              光柱围绕唱片光环绽放，3D 模式下环绕旋转。拇指要展开。
+            </p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoThumbsup"
+          data-gesture-demo="thumbsup"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="用户视角：掌心可见，四指收拢成拳，拇指从右侧向上竖起"
+            >
+              <g transform="translate(38 2)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandThumbsup" />
+                  <path
+                    class="gesture-effect gesture-animated"
+                    d="m51 49-4-20 14 9 8-18 8 18 14-9-4 20Z"
+                    fill="#edce9125"
+                    stroke="#edce91"
+                  />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">07 / 09 · 你的视角</span>
+            <h3>竖起拇指</h3>
+            <p class="gesture-instruction">
+              四指收拢握拳，拇指自然朝上。<br />手背略朝镜头，避免完全侧着手。
+            </p>
+            <strong class="gesture-result">金色加冕礼花</strong>
+            <p class="gesture-detail">
+              金线勾出王冠，冠尖迸出星芒；3D 模式下整顶王冠旋转。
+            </p>
+          </figcaption>
+        </figure>
+        <figure
+          class="gesture-demo"
+          id="gestureDemoShaka"
+          data-gesture-demo="shaka"
+          hidden
+        >
+          <div class="gesture-art-wrap">
+            <svg
+              class="gesture-art"
+              viewBox="0 0 320 260"
+              role="img"
+              aria-label="手背朝镜头，只伸直张开拇指和小指，食指中指无名指全部收起"
+            >
+              <g transform="translate(38 2)">
+                <g class="pose-sway gesture-animated">
+                  <use href="#gestureHandShaka" />
+                  <path
+                    class="gesture-effect gesture-animated"
+                    d="M42 64q13-16 26 0t26 0m-53 13q13-16 26 0t26 0"
+                    fill="none"
+                    stroke="#8be3ed"
+                  />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            <span class="gesture-step">08 / 09 · 单手</span>
+            <h3>比个六</h3>
+            <p class="gesture-instruction">
+              手背朝镜头，拇指、小指展开。<br />食指、中指、无名指全部收起。
+            </p>
+            <strong class="gesture-result">碧海双旋流光</strong>
+            <p class="gesture-detail">
+              两道青蓝光浪前后交织；3D 模式下化作旋转双螺旋。保持手势即可。
+            </p>
+          </figcaption>
+        </figure>
+        <div class="gesture-placement">
+          <span>光线均匀</span><span>手腕与指尖完整入镜</span
+          ><span>交叉处朝向镜头</span>
+        </div>
+        <div class="gesture-guide-footer">
+          <p>
+            可先试放烟花，再开启相机。<br />画面仅在本机处理，开启时加载识别模型。
+          </p>
+          <button class="gold-button" id="gesturePreviewBtn" type="button">
+            试放此烟花
+          </button>
+        </div>
+      </section>
+      <div class="footer-note">
+        A MOMENT OF <b>WONDER</b><span class="touch-label"> · 轻触绽放</span>
+      </div>
+    </div>
+    <audio id="musicTrack" preload="none" loop playsinline></audio>
+    <audio id="musicTrackAlt" preload="none" loop playsinline></audio>
+    <canvas id="nearStage" aria-hidden="true"></canvas>
+    <canvas id="storyDepthStage" aria-hidden="true" hidden></canvas>
+    <canvas
+      id="phoenixStage"
+      role="img"
+      aria-label="凤舞九天三维火凤演出"
+      hidden
+    ></canvas>
+    <canvas
+      id="phoenixFlatStage"
+      role="img"
+      aria-label="凤舞九天平面凤舞演出"
+      hidden
+    ></canvas>
+    <canvas
+      id="dragonStage"
+      role="img"
+      aria-label="飞龙在天三维演出，点击暂停或继续"
+      hidden
+    ></canvas>
+    <section
+      class="phoenix-hud"
+      id="phoenixHud"
+      aria-label="凤舞九天演出"
+      tabindex="-1"
+      hidden
+    >
+      <div class="phoenix-top">
+        <div>
+          <div class="phoenix-kicker" id="programmeKicker">
+            PHOENIX · REBIRTH IN FLAME
+          </div>
+          <h2 id="programmeTitle">凤舞九天</h2>
+        </div>
+        <div class="phoenix-controls">
+          <button type="button" id="phoenixPauseBtn" aria-pressed="false">
+            暂停</button
+          ><button type="button" id="phoenixExitBtn">返回剧场</button>
+        </div>
+      </div>
+      <div class="phoenix-bottom">
+        <button
+          type="button"
+          class="phoenix-replay"
+          id="phoenixReplayBtn"
+          hidden
+        >
+          再舞一次 ↗
+        </button>
+        <p class="phoenix-act" id="phoenixActTitle">静候火种</p>
+        <p
+          class="phoenix-caption"
+          id="phoenixCaption"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          正在准备演出…
+        </p>
+        <div
+          class="phoenix-progress"
+          id="phoenixProgress"
+          role="progressbar"
+          aria-label="凤舞九天演出进度"
+          aria-valuemin="0"
+          aria-valuemax="27"
+          aria-valuenow="0"
+        >
+          <i></i>
+        </div>
+        <div class="phoenix-meta">
+          <span id="phoenixTime">00:00 / 00:27</span
+          ><span>空格 暂停 · Esc 返回剧场</span>
+        </div>
+      </div>
+    </section>
+    <section
+      class="love-hud"
+      id="loveHud"
+      aria-label="万语同心浪漫烟火秀"
+      tabindex="-1"
+      hidden
+    >
+      <div class="love-top">
+        <div>
+          <div class="love-kicker">LOVE, IN EVERY LANGUAGE</div>
+          <h2 id="loveActTitle">万语同心</h2>
+        </div>
+        <div class="love-controls">
+          <button type="button" id="lovePauseBtn" aria-pressed="false">
+            暂停</button
+          ><button type="button" id="loveExitBtn">结束告白</button>
+        </div>
+      </div>
+      <div class="love-bottom">
+        <p
+          class="love-caption"
+          id="loveCaption"
+          role="status"
+          aria-live="polite"
+        ></p>
+        <div class="love-progress" id="loveProgress" aria-hidden="true"></div>
+        <div class="love-meta">
+          <span id="loveTime">00:00 / 00:56</span
+          ><span>空格 暂停 · Esc 退出</span>
+        </div>
+      </div>
+      <ul id="loveTranscript" class="sr-only" aria-label="夜空中的语言"></ul>
+    </section>
+    <section
+      class="story-hud"
+      id="storyHud"
+      aria-label="爱丽丝烟火童话演出"
+      tabindex="-1"
+      hidden
+    >
+      <div class="story-top">
+        <div>
+          <div class="story-kicker" id="storyKicker">
+            FIREWORK TALES · 爱丽丝梦游仙境
+          </div>
+          <div class="story-heading">
+            <h2 id="storyActTitle">追逐白兔</h2>
+            <span id="storyActCount">第一幕 / 七幕</span>
+          </div>
+        </div>
+        <div class="story-controls">
+          <button type="button" id="storyPauseBtn" aria-pressed="false">
+            暂停</button
+          ><button type="button" id="storyNextBtn">下一幕 →</button
+          ><button type="button" id="storyExitBtn">退出演出</button>
+        </div>
+      </div>
+      <div class="story-bottom">
+        <h3 class="story-end-title" id="storyEndTitle" hidden>
+          愿你永远，心有奇境
+        </h3>
+        <button type="button" class="story-replay" id="storyReplayBtn" hidden>
+          再入梦一次 ↗
+        </button>
+        <p
+          class="story-caption"
+          id="storyCaption"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        ></p>
+        <nav class="story-timeline" aria-label="选择烟火童话章节">
+          <button
+            type="button"
+            data-story-act="0"
+            aria-label="第一幕：追逐白兔"
+          >
+            白兔</button
+          ><button
+            type="button"
+            data-story-act="1"
+            aria-label="第二幕：坠入星洞"
+          >
+            星洞</button
+          ><button
+            type="button"
+            data-story-act="2"
+            aria-label="第三幕：花园低语"
+          >
+            花园</button
+          ><button
+            type="button"
+            data-story-act="3"
+            aria-label="第四幕：月下的微笑"
+          >
+            微笑</button
+          ><button
+            type="button"
+            data-story-act="4"
+            aria-label="第五幕：没有终点的茶会"
+          >
+            茶会</button
+          ><button
+            type="button"
+            data-story-act="5"
+            aria-label="第六幕：红心风暴"
+          >
+            红心</button
+          ><button
+            type="button"
+            data-story-act="6"
+            aria-label="第七幕：梦醒，星光仍在"
+          >
+            梦醒
+          </button>
+        </nav>
+        <div class="story-meta">
+          <span id="storyTime">00:00 / 01:30</span
+          ><button type="button" id="storySoundBtn">音效关闭 · 点击开启</button
+          ><span id="storyGestureHint">空格 暂停 · Esc 退出</span>
+        </div>
+      </div>
+    </section>
+    <button class="restore" id="restoreBtn" hidden>
+      显示控制<span class="desktop-key-hint"> · H / Esc</span>
+    </button>
+    <button class="slow-exit" id="slowExit" hidden>
+      时光慢镜 0.28× · 点击恢复
+    </button>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <!-- THEATRE_BOOT -->
+  </body>
+</html>

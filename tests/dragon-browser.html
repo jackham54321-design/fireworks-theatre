@@ -1,0 +1,17 @@
+<!doctype html><html><meta charset="utf-8"><title>Dragon jaw and palm inspection</title><style>body{margin:0;background:#071117}canvas{display:block;width:100vw;height:100vh}</style>
+<script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.js","three/addons/":"../vendor/three/examples/jsm/"}}</script><canvas id="stage"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {createDragonAttack} from '../src/shows/dragon/attack.js';
+const renderer=new THREE.WebGLRenderer({canvas:stage,antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
+const scene=new THREE.Scene();scene.background=new THREE.Color('#071117');scene.add(new THREE.HemisphereLight(0xbde5ff,0x302418,2));
+for(const [x,y,z,power]of [[-7,8,8,3],[8,5,-5,3],[0,2,12,1]]){const light=new THREE.DirectionalLight(0xffffff,power);light.position.set(x,y,z);scene.add(light)}
+const gltf=await new GLTFLoader().loadAsync('../assets/models/dragon-show-v14.webp.glb');const actor=gltf.scene;scene.add(actor);actor.traverse(o=>{if(o.isMesh)o.frustumCulled=false});
+const head=actor.getObjectByName('head');let inverse;actor.traverse(o=>{if(o.isSkinnedMesh&&!inverse)inverse=o.skeleton.boneInverses[o.skeleton.bones.indexOf(head)].clone()});
+const mixer=new THREE.AnimationMixer(actor),action=mixer.clipAction(gltf.animations[0]);action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();
+const attack=createDragonAttack(actor,head,inverse),camera=new THREE.PerspectiveCamera(32,innerWidth/innerHeight,.03,200);let time=18.75;
+function show(angle=60,t=18.75){time=t;attack.restore();action.paused=false;action.enabled=true;mixer.setTime(t);actor.updateMatrixWorld(true);attack.apply(t);actor.updateMatrixWorld(true);const matrix=head.matrixWorld.clone().multiply(inverse),target=new THREE.Vector3(0,.78,3.68).applyMatrix4(matrix),front=new THREE.Vector3(0,0,1).transformDirection(matrix),right=new THREE.Vector3(1,0,0).transformDirection(matrix),rad=angle*Math.PI/180;camera.position.copy(target).addScaledVector(front,2.8*Math.cos(rad)).addScaledVector(right,2.8*Math.sin(rad));camera.lookAt(target);camera.updateMatrixWorld(true);renderer.render(scene,camera);return attack.inspect()}
+window.jawQA={show,actor,attack,mixer,head,inverse,THREE};show();
+addEventListener('pagehide',()=>{attack.dispose();renderer.dispose()});
+</script></html>

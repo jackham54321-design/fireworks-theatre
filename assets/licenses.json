@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "project_code": {
+    "license": "MIT",
+    "status": "user_approved",
+    "scope": "Original Fireworks Theatre source code, locally synthesized burst/tail/wind audio, and procedural rose implementation.",
+    "excludes": "Bundled music, third-party runtimes/models, user-attested paid media, Tripo outputs, and the OpenAI-generated rose photo."
+  },
+  "components": [
+    {
+      "id": "three",
+      "assets": ["vendor/three"],
+      "license": "MIT",
+      "status": "license_text_included",
+      "primary_url": "https://github.com/mrdoob/three.js/blob/dev/LICENSE",
+      "notice": "Preserve vendor/three/LICENSE."
+    },
+    {
+      "id": "mediapipe_tasks_vision_and_hand_landmarker",
+      "assets": ["vendor/mediapipe", "vendor/mediapipe/hand_landmarker.task"],
+      "license": "Apache-2.0",
+      "status": "license_text_included",
+      "primary_license_url": "https://www.apache.org/licenses/LICENSE-2.0/",
+      "model_card_url": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Hand%20Tracking%20%28Lite_Full%29%20with%20Fairness%20Oct%202021.pdf",
+      "notice": "Preserve vendor/mediapipe/LICENSE."
+    },
+    {
+      "id": "scott_buckley_music",
+      "assets": ["audio/music/moonlight.mp3", "audio/music/hope.mp3", "audio/music/computations.mp3", "audio/music/reverie.mp3", "audio/music/childhood.mp3", "audio/music/celestial.mp3", "audio/music/titan.mp3", "audio/music/signal.mp3", "audio/music/snowfall.mp3"],
+      "creator": "Scott Buckley",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "creator_url": "https://www.scottbuckley.com.au",
+      "use_information_url": "https://www.scottbuckley.com.au/library/using-this-music/",
+      "status": "attribution_and_change_notice_required",
+      "notice": "Moonlight is a 128 kbps stereo MP3/44.1 kHz transcode of the full recording. The other tracks are excerpts, transcoded with constant gain and edge fades; runtime mix adds level correction, programme envelopes, ducking, and output ceiling. Pitch and playback rate are unchanged.",
+      "tracks": [
+        {"file": "moonlight.mp3", "title": "Moonlight", "official_page": "https://www.scottbuckley.com.au/library/moonlight/", "change_note": "Full recording; transcoded to 128 kbps stereo MP3, 44.1 kHz."},
+        {"file": "hope.mp3", "title": "A Kind Of Hope", "official_page": "https://www.scottbuckley.com.au/library/a-kind-of-hope/", "change_note": "Excerpt 12–87 s; transcode, constant gain adjustment, edge fades."},
+        {"file": "computations.mp3", "title": "Computations in a Snowstorm", "official_page": "https://www.scottbuckley.com.au/library/computations/", "change_note": "Excerpt 25–100 s; transcode, constant gain adjustment, edge fades."},
+        {"file": "reverie.mp3", "title": "Reverie", "official_page": "https://www.scottbuckley.com.au/library/reverie/", "change_note": "Excerpt 30–100 s; transcode, constant gain adjustment, edge fades."},
+        {"file": "childhood.mp3", "title": "Childhood", "official_page": "https://www.scottbuckley.com.au/library/childhood/", "change_note": "Excerpt 0–100 s; transcode, constant gain adjustment, edge fades."},
+        {"file": "celestial.mp3", "title": "Celestial", "official_page": "https://www.scottbuckley.com.au/library/celestial/", "change_note": "Excerpt 25–130 s; transcode, constant gain adjustment, edge fades."},
+        {"file": "titan.mp3", "title": "Titan", "official_page": "https://www.scottbuckley.com.au/library/titan/", "change_note": "Excerpt 100–140 s; transcode, constant gain adjustment, edge fades."},
+        {"file": "signal.mp3", "title": "Signal to Noise", "official_page": "https://www.scottbuckley.com.au/library/signal-to-noise/", "change_note": "Excerpt 40–115 s; transcode, constant gain adjustment, edge fades."},
+        {"file": "snowfall.mp3", "title": "Snowfall", "official_page": "https://www.scottbuckley.com.au/library/snowfall/", "change_note": "Excerpt 28–103 s; transcode, constant gain adjustment, edge fades."}
+      ]
+    },
+    {
+      "id": "tripo_dragon_and_phoenix_models",
+      "assets": ["models/dragon-show-v14.webp.glb", "models/phoenix-rig-v16.webp.glb"],
+      "primary_url": "https://www.tripo3d.ai/terms",
+      "status": "user_confirmed_paid_entitlement_not_invoice_verified",
+      "provenance": "User confirms paid-plan Tripo jobs using project-original generated concepts as inputs.",
+      "license": "not_included_in_project_MIT_grant"
+    },
+    {
+      "id": "aigei_user_attested_media",
+      "assets": ["dragon roar audio", "phoenix call audio", "audio/theatre-effects-v30-glass.flac", "data/firework-samples-v25.json launch PCM"],
+      "primary_url": "https://www.aigei.com/faq/doc/45.html",
+      "status": "user_attested_not_independently_verified",
+      "rights_statement": "User confirms paid access and a right to use the dragon, phoenix, new-glass, and new-launch media. Exact per-item grant is not independently verified.",
+      "license": "not_MIT_not_CC0_not_formally_cleared",
+      "items": [
+        {"kind": "dragon", "source": "Aigei", "rights_status": "user_attested_not_independently_verified"},
+        {"kind": "phoenix", "source": "Aigei", "rights_status": "user_attested_not_independently_verified"},
+        {"kind": "newglass", "title": "玻璃碎裂", "uploader": "雨眠考拉", "collection": "常用音效3639首", "rights_status": "user_attested_not_independently_verified"},
+        {"kind": "newlaunch", "title": "发射 烟花升空 咻", "uploader": "栅栏堆成山", "collection": "栅栏-音效设计6首", "rights_status": "user_attested_not_independently_verified"}
+      ]
+    },
+    {
+      "id": "sounddino_thunder",
+      "assets": ["thunder audio used in dragon effects"],
+      "primary_url": "https://sounddino.com/zh/effects/thunderstorm/",
+      "status": "provider_represented_free_commercial_project_incorporation",
+      "raw_redistribution_status": "not_specifically_verified",
+      "license": "not_included_in_project_MIT_grant"
+    },
+    {
+      "id": "openai_generated_rose_photo",
+      "assets": ["images/love-rose-photo.webp"],
+      "provenance": "Generated with OpenAI; embedded C2PA provenance evidence retained from the source image.",
+      "status": "provenance_recorded",
+      "license": "not_included_in_project_MIT_grant"
+    }
+  ],
+  "redistribution_obligations": [
+    "Retain MIT, Apache-2.0, and CC-BY-4.0 notices and links with redistributed material.",
+    "Credit Scott Buckley and identify the listed music changes under CC BY 4.0.",
+    "Do not represent user-attested Aigei media, Tripo outputs, SoundDino thunder, or the OpenAI-generated rose photo as MIT or CC0.",
+    "Check the applicable provider terms before redistributing raw third-party media."
+  ]
+}

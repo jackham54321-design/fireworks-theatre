@@ -1,0 +1,55 @@
+{
+  "revision": 30,
+  "resources": {
+    "phoenix-3d-review/phoenix-rig-v16.glb": "assets/models/phoenix-rig-v16.webp.glb",
+    "phoenix-review/rig-flight.png": "assets/images/rig-flight.webp",
+    "phoenix-review/rig-upright.png": "assets/images/rig-upright.webp",
+    "phoenix-review/rig-feathers.png": "assets/images/rig-feathers.webp",
+    "dragon-3d-review/dragon-show-v14.glb": "assets/models/dragon-show-v14.webp.glb",
+    "dragon-3d-review/show-foot-motion-v14.json": "assets/data/show-foot-motion-v14.json",
+    "dragon-3d-review/theatre-music-v27.wav": "assets/audio/theatre-music-v27.flac",
+    "dragon-3d-review/theatre-effects-v29.wav": "assets/audio/theatre-effects-v30-glass.flac",
+    "fireworks-audio/moonlight.mp3": "assets/audio/music/moonlight.mp3",
+    "fireworks-audio/hope.mp3": "assets/audio/music/hope.mp3",
+    "fireworks-audio/computations.mp3": "assets/audio/music/computations.mp3",
+    "fireworks-audio/reverie.mp3": "assets/audio/music/reverie.mp3",
+    "fireworks-audio/childhood.mp3": "assets/audio/music/childhood.mp3",
+    "fireworks-audio/celestial.mp3": "assets/audio/music/celestial.mp3",
+    "fireworks-audio/titan.mp3": "assets/audio/music/titan.mp3",
+    "fireworks-audio/signal.mp3": "assets/audio/music/signal.mp3",
+    "fireworks-audio/snowfall.mp3": "assets/audio/music/snowfall.mp3",
+    "vision/vision_bundle.mjs": "assets/vendor/mediapipe/vision_bundle.mjs",
+    "vision/wasm/vision_wasm_internal.js": "assets/vendor/mediapipe/wasm/vision_wasm_internal.js",
+    "vision/wasm/vision_wasm_internal.wasm": "assets/vendor/mediapipe/wasm/vision_wasm_internal.wasm",
+    "vision/wasm/vision_wasm_nosimd_internal.js": "assets/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.js",
+    "vision/wasm/vision_wasm_nosimd_internal.wasm": "assets/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.wasm",
+    "vision/hand_landmarker.task": "assets/vendor/mediapipe/hand_landmarker.task",
+    "initial/acceptedRoseAsset": "assets/data/accepted-rose-asset.json",
+    "initial/fireworkSamplesV25": "assets/data/firework-samples-v25.json",
+    "initial/phoenixCallPcmBase64": "assets/data/phoenix-call.wav",
+    "initial/loveRosePhoto": "assets/images/love-rose-photo.webp"
+  },
+  "shows": {
+    "phoenix3d": {
+      "entry": "src/shows/phoenix/index.js",
+      "assets": ["phoenix-3d-review/phoenix-rig-v16.glb"]
+    },
+    "phoenix2d": {
+      "entry": "src/shows/phoenix2d/index.js",
+      "assets": [
+        "phoenix-review/rig-flight.png",
+        "phoenix-review/rig-upright.png",
+        "phoenix-review/rig-feathers.png"
+      ]
+    },
+    "dragon": {
+      "entry": "src/shows/dragon/index.js",
+      "assets": [
+        "dragon-3d-review/dragon-show-v14.glb",
+        "dragon-3d-review/show-foot-motion-v14.json",
+        "dragon-3d-review/theatre-music-v27.wav",
+        "dragon-3d-review/theatre-effects-v29.wav"
+      ]
+    }
+  }
+}
