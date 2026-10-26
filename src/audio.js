@@ -55,6 +55,7 @@ export function createAudioController(deps) {
     musicBus = null,
     musicPending = false,
     musicFailed = false,
+    audioUnlocked = false,
     musicMixAt = 0,
     duckUntil = 0,
     duckDepth = 0,
@@ -357,7 +358,7 @@ export function createAudioController(deps) {
     return phoenixCallLoading;
   }
   function initAudio() {
-    if (!state.sound) return;
+    if (!state.sound || !audioUnlocked) return;
     try {
       if (!audio) {
         const AC = window.AudioContext || window.webkitAudioContext;
@@ -622,6 +623,7 @@ export function createAudioController(deps) {
   function musicAllowed() {
     return (
       state.sound &&
+      audioUnlocked &&
       soundPreferences.music &&
       !state.paused &&
       !document.hidden &&
@@ -868,15 +870,22 @@ export function createAudioController(deps) {
     $("soundBtn").setAttribute("aria-pressed", String(state.sound));
     $("soundBtn").setAttribute(
       "aria-label",
-      state.sound ? "关闭声音" : "开启声音",
+      state.sound
+        ? audioUnlocked
+          ? "关闭声音"
+          : "声音已启用，首次操作后播放"
+        : "开启声音",
     );
     $("soundBtn").title = "音乐与音效 · M";
     $("soundInput").checked = state.sound;
     $("soundWaves").setAttribute(
       "d",
-      state.sound ? "M15 8q4 4 0 8m3-11q7 7 0 14" : "m16 9 5 6m0-6-5 6",
+      state.sound && audioUnlocked
+        ? "M15 8q4 4 0 8m3-11q7 7 0 14"
+        : "m16 9 5 6m0-6-5 6",
     );
-    const on = state.sound && soundPreferences.music,
+    const pendingUnlock = state.sound && !audioUnlocked,
+      on = state.sound && soundPreferences.music && audioUnlocked,
       track = scoreTracks[scoreScenes[scoreScene].track];
     $("musicBtn").textContent = on
       ? musicFailed
@@ -911,17 +920,19 @@ export function createAudioController(deps) {
       ? "轻触开启，让音乐为夜空伴奏。"
       : !soundPreferences.music
         ? "配乐已暂停 · 烟火由你聆听。"
-        : state.paused
-          ? "演出暂停 · 配乐已同步暂停。"
-          : document.hidden
-            ? "页面暂离 · 配乐已暂停。"
-            : musicFailed
-              ? "本段配乐未载入，点击重试；已有配乐会保留。"
-              : musicPending
-                ? "正在为这一场烟火换上配乐…"
-                : soundPreferences.followShows
-                  ? "配乐随演出流转 · 谢幕后接回日常乐章。"
-                  : "月光流淌 · 保持日常配乐。";
+        : pendingUnlock
+          ? "声音已启用 · 首次操作后播放。"
+          : state.paused
+            ? "演出暂停 · 配乐已同步暂停。"
+            : document.hidden
+              ? "页面暂离 · 配乐已暂停。"
+              : musicFailed
+                ? "本段配乐未载入，点击重试；已有配乐会保留。"
+                : musicPending
+                  ? "正在为这一场烟火换上配乐…"
+                  : soundPreferences.followShows
+                    ? "配乐随演出流转 · 谢幕后接回日常乐章。"
+                    : "月光流淌 · 保持日常配乐。";
     if (runtime.story) syncStoryUI(true);
   }
   function syncAudioPlayback() {
@@ -979,8 +990,19 @@ export function createAudioController(deps) {
       requestSceneScore();
     }
   }
+  function unlockAudio() {
+    if (!state.sound) return;
+    const wasUnlocked = audioUnlocked;
+    audioUnlocked = true;
+    initAudio();
+    if (!wasUnlocked) syncAudioPlayback();
+  }
   function setSound(on) {
     state.sound = on;
+    if (on && !audioUnlocked) {
+      unlockAudio();
+      return;
+    }
     if (on) initAudio();
     syncAudioPlayback();
   }
@@ -988,19 +1010,41 @@ export function createAudioController(deps) {
     setSound(!state.sound);
   }
   function bindAudioUI() {
+    const unlockOnTrustedEvent = (event) => {
+      if (
+        !event.isTrusted ||
+        event.key?.toLowerCase() === "m" ||
+        event.target?.closest?.(
+          "#soundBtn,#soundInput,#musicBtn,#storySoundBtn",
+        )
+      )
+        return;
+      unlockAudio();
+    };
+    document.addEventListener("pointerdown", unlockOnTrustedEvent, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("keydown", unlockOnTrustedEvent, {
+      capture: true,
+    });
     $("soundBtn").addEventListener("click", toggleSound);
     $("soundInput").addEventListener("change", (e) =>
       setSound(e.target.checked),
     );
     $("musicBtn").addEventListener("click", () => {
+      if (!audioUnlocked && state.sound && soundPreferences.music) {
+        unlockAudio();
+        return;
+      }
       if (!musicFailed)
         soundPreferences.music = !state.sound || !soundPreferences.music;
       else {
         musicFailed = false;
         soundPreferences.music = true;
       }
-      if (!state.sound) state.sound = true;
-      initAudio();
+      if (!state.sound) setSound(true);
+      else initAudio();
       savePreferences();
       syncAudioPlayback();
     });
@@ -1034,6 +1078,9 @@ export function createAudioController(deps) {
     get output() {
       return master;
     },
+    get isUnlocked() {
+      return audioUnlocked;
+    },
     get accentUntil() {
       return musicAccentUntil;
     },
@@ -1054,6 +1101,7 @@ export function createAudioController(deps) {
       pendingScore,
       musicPending,
       musicFailed,
+      audioUnlocked,
       ambientScorePosition,
     }),
     makeFireworkBuffer,
@@ -1067,6 +1115,7 @@ export function createAudioController(deps) {
     scoreCue,
     alignProgrammeScore,
     preparePhoenixCall,
+    unlockAudio,
     initAudio,
     updateAudioGains,
     stopSoundVoices,

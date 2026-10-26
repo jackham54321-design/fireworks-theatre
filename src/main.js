@@ -1,4 +1,4 @@
-import {makeAcceptedRoseRuntime} from './rose-renderer.js';
+import { makeAcceptedRoseRuntime } from "./rose-renderer.js";
 import { createAudioController } from "./audio.js";
 export function createTheatre(initialAssets) {
   // One transport owns rendering, input, show lifecycle and user-activated audio.
@@ -22,7 +22,7 @@ export function createTheatre(initialAssets) {
     auto: !reduced.matches,
     density: 2,
     quality: "auto",
-    sound: false,
+    sound: true,
     immersed: false,
     slow: false,
     wind: 0.2,
@@ -7352,7 +7352,9 @@ void main(){
     $("storyPauseBtn").disabled = s.finished;
     $("storyNextBtn").disabled = s.finished || s.act === storyActs.length - 1;
     $("storySoundBtn").textContent = state.sound
-      ? "音效已开 · 点击静音"
+      ? audioController.isUnlocked
+        ? "音效已开 · 点击静音"
+        : "声音待启用 · 点击静音"
       : "音效关闭 · 点击开启";
     $("storyKicker").textContent =
       s.variant === "immersive"
@@ -10247,6 +10249,7 @@ void main(){
       time: show.age,
       playing:
         state.sound &&
+        audioController.isUnlocked &&
         !state.paused &&
         !document.hidden &&
         show.status === "ready" &&
@@ -11008,7 +11011,7 @@ void main(){
   // BEGIN ACCEPTED ROSE RUNTIME
   const acceptedRoseAsset = initialAssets.rose;
   let acceptedRoseRuntime = null;
-  
+
   function acceptedRoseStage() {
     const clip = meshRoseViewport(),
       height = Math.min(clip.bottom - clip.top, w * 1.25);
@@ -11021,7 +11024,11 @@ void main(){
   }
   function prepareAcceptedRoses() {
     if (!acceptedRoseRuntime) {
-      acceptedRoseRuntime = makeAcceptedRoseRuntime(acceptedRoseAsset, {onError: error => {nearCanvas.dataset.roseError = String(error.message || error);}});
+      acceptedRoseRuntime = makeAcceptedRoseRuntime(acceptedRoseAsset, {
+        onError: (error) => {
+          nearCanvas.dataset.roseError = String(error.message || error);
+        },
+      });
       acceptedRoseRuntime.prewarm();
     }
     return acceptedRoseRuntime;
@@ -15626,12 +15633,10 @@ void main(){
       clearHandTracking();
     const dt = lastHandsAt === null ? 0 : now - lastHandsAt;
     lastHandsAt = now;
-    const measured = (result.landmarks || [])
-      .slice(0, 2)
-      .map((lm, i) => ({
-        ...measureHand(lm, result.worldLandmarks?.[i]),
-        side: result.handedness?.[i]?.[0]?.categoryName,
-      }));
+    const measured = (result.landmarks || []).slice(0, 2).map((lm, i) => ({
+      ...measureHand(lm, result.worldLandmarks?.[i]),
+      side: result.handedness?.[i]?.[0]?.categoryName,
+    }));
     const samples = measured
       .filter((s) => s.valid)
       .filter(

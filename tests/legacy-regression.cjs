@@ -22,7 +22,7 @@ const initialAssets={
  rosePhoto:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR42mNk+M/wHwAF/gL+W0GXaQAAAABJRU5ErkJggg==',
 };
 const cloneInitialAssets=()=>JSON.parse(JSON.stringify(initialAssets));
-const audioTestExports=`globalThis.audioTest={soundPreferences,scoreTracks,scoreScenes,performanceScoreScene,getMusicDecks,initAudio,setSound,toggleSound,syncAudioPlayback,syncPerformanceScore,updateMusicMix,boom,whoosh,stopSoundVoices,setClock:v=>{clock=v;syncPerformanceScore()},get:()=>audioController.inspect()};`;
+const audioTestExports=`globalThis.audioTest={soundPreferences,scoreTracks,scoreScenes,performanceScoreScene,getMusicDecks,initAudio,unlockAudio:audioController.unlockAudio,setSound,toggleSound,syncAudioPlayback,syncPerformanceScore,updateMusicMix,boom,whoosh,stopSoundVoices,setClock:v=>{clock=v;syncPerformanceScore()},get:()=>audioController.inspect()};`;
 const theatreTestExports=`globalThis.test={startPhoenixShow,stopPhoenixShow,advancePhoenixShow,paintPhoenixShow,syncPhoenixUI,getPhoenix:()=>phoenix,getPhoenixRuntimes:()=>phoenixRuntimes,queueLoveCurvedPetal,flushLoveCurvedPetals,lovePetalScreenFade,getCurvedPetals:()=>loveCurvedPetals,meshRosePetals,meshRoseGreens,meshRosePoint,meshRoseRig,meshRoseMatrix,meshRoseTransform,meshRoseCenter,meshRoseRelease,meshRosePetalState,meshRoseInstances,prepareRoseMeshGpu,writeRoseMeshInstance,drawRoseScene,getRoseMeshGpu:()=>roseMeshGpu,loadRosePhoto:()=>loveRosePhoto.listeners.load(),loveRoseFragment,gpuLoveFragment,beginLoveGpu,finishLoveGpu,gpuLovePetal,gpuLoveMote,drawLovePetalPoints,drawLoveRoseScatter,drawLoveHeart,loveTextPlane,ctx,nearFx,prepareOrdinaryGpu,drawOrdinaryGpu,gpuParticleSprite,gpuParticleTrail,particleScale,getOrdinaryGpu:()=>ordinaryGpu,particleInView,drawParticle,paintWishMote,spriteCache,light,backdrop,nearCanvas,hasOpenPanel,togglePanel,closePanels,syncCompactControls,setImmersed,loveFinalCaption,getEncounter:()=>encounter,prepareAcceptedRoses,acceptedRoseConfig,loveFinalFlowerPose,captureLoveHearts:()=>{const hearts=[],saved=drawLoveHeart;try{drawLoveHeart=(show,x,y,size,yaw,alpha,color,z=0,pitch=0,echo=false)=>hearts.push({x,y,size,yaw,alpha,color,z,pitch,echo});drawLoveShow(textCloud)}finally{drawLoveHeart=saved}return hearts},state,lovePetalTumble,paintLovePetalFaces,lovePlane,loveEase,loveRoseRainBlend,drawDepthLoveRain,isLoveWish,loveLanguages,loveCues,loveStages,layoutLove,loveTextVisibility,loveFinalWords,loveProject,loveWordPose,loveWordDrift,loveHeartMotion,loveHeartPosition,loveWordRelease,loveWordOpacity,loveFinalMotion,loveFinalWordDrift,loveFinalWordRelease,loveFinalWordOpacity,loveFinalWordPetals,loveWordPetals,drawLoveWords,drawLoveFinalWords,loveRosePetals,lovePetalPose,loveRoseScatter,loveDepthRosePose,loveDepthPetal,loveHeartPoints,drawLoveShow,advanceWishShow,paint,maxParticles,storyArt,storyActs,immersiveStoryActs,storyDuration,storyLayout,storyActorPose,storyPartAlpha,makeImmersiveModel,immersiveCamera,immersivePose,immersiveProject,immersiveView,immersiveFlightPoint,immersiveActing,immersiveDeform,immersivePartAlpha,awakenImmersiveMagic,immersiveCues,renderImmersiveStory,startAliceStory,stopAliceStory,seekStoryAct,advanceStory,drawStoryScene,startCamera,stopCamera,analyze,frame,launch,finale,burst,togglePause,toggleSlow,specialShow,resize,processHands,hue,letterVisibility,finishWishShow,revealWishGlyph,setAutoPlay,schedule,setViewMode,projectDepth,depthFocal,wishGlyphPose,projectWishPoint,depthShellPoint,drawDepthShells,ordinaryCometTail,refreshCometMaterials,wishCometTail,wishTailVisibility,drawDepthWishText,refreshWishMaterials,get:()=>({cameraState,story,immersiveRenderer,particles,rockets,ordinaryComets,clock,wish,textCloud,pending,handMarks,meteors,skyPaths,pointer}),setWish:s=>{wish=s;createText()}};`;
 function injectForTest(source){
  const closing=/\n}\s*$/;
@@ -49,7 +49,15 @@ function fixture({media,vision,width=1280,height=720,pixelRatio=1,webgl=null,off
   play(){this.paused=false;return Promise.resolve()}pause(){this.paused=true}
  }
  const get=id=>{if(!elements.has(id))elements.set(id,new El(id));return elements.get(id)};
- const doc={getElementById:get,createElement:()=>new El(),querySelectorAll:()=>[],documentElement:new El(),body:new El(),hidden:false,listeners:{},addEventListener(name,fn){this.listeners[name]=fn}};
+ const doc={getElementById:get,createElement:()=>new El(),querySelectorAll:()=>[],documentElement:new El(),body:new El(),hidden:false,listeners:{},addEventListener(name,fn){
+const previous = this.listeners[name];
+this.listeners[name] = previous
+        ? (...args) => {
+            previous(...args);
+            fn(...args);
+          }
+        : fn;
+}};
  const timers=new Map();let timer=0;
  const sandbox={console,atob,Image:class{set src(value){this.onload?.()}},document:doc,innerWidth:width,innerHeight:height,devicePixelRatio:pixelRatio,Element:El,navigator:{mediaDevices:media?{getUserMedia:media}:undefined},mockVision:vision,now:0,performance:{now:()=>sandbox.now},matchMedia:()=>({matches:reduced,addEventListener(){}}),requestAnimationFrame(){},addEventListener(){},setTimeout(fn,ms){timers.set(++timer,{fn,ms});return timer},clearTimeout(id){timers.delete(id)}};
  sandbox.window=sandbox;
@@ -98,9 +106,9 @@ function mixFor(f,seconds=2){f.mixTime??=0;for(let t=0;t<seconds*1000;t+=50){f.m
   const f=fixture(),a=f.audioApi,catalog=curatedMusic;assert.equal(catalog.length,9);assert.equal(new Set(Object.values(a.scoreScenes).map(s=>s.track)).size,9);
   for(const entry of catalog){assert(fs.statSync(path.join(ROOT,'assets/audio/music',entry.file)).size>100000);assert.equal(entry.license,'CC BY 4.0');assert(entry.official_page.startsWith('https://www.scottbuckley.com.au/library/'));for(const scene of Object.values(a.scoreScenes))if(scene.track===entry.id)assert(scene.cue+10<entry.duration)}
  });
- await test('scene scores select every show while muted without loading or enabling automatic fireworks',()=>{
-  const f=fixture(),a=f.audioApi;f.api.setAutoPlay(false);for(const mode of ['heart','orbit','meteor','depth']){f.api.specialShow(mode);assert.equal(a.get().scoreScene,mode);assert.equal(a.get().audio,null);assert.equal(f.api.state.sound,false);assert.equal(f.get('musicTrackAlt').src,undefined)}
-  f.api.startAliceStory('classic');assert.equal(a.get().scoreScene,'classic');f.api.stopAliceStory();f.api.startAliceStory('immersive');assert.equal(a.get().scoreScene,'immersive');f.api.stopAliceStory();f.api.setWish('生日快乐');assert.equal(a.get().scoreScene,'wish');f.api.finishWishShow(true);f.api.setWish('magic');assert.equal(a.get().scoreScene,'love');f.api.finishWishShow(true);f.api.finale();assert.equal(a.get().scoreScene,'finale');assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,false);
+ await test("scene scores select every show before audio unlock without loading or enabling automatic fireworks",()=>{
+  const f=fixture(),a=f.audioApi;f.api.setAutoPlay(false);for(const mode of ['heart','orbit','meteor','depth']){f.api.specialShow(mode);assert.equal(a.get().scoreScene,mode);assert.equal(a.get().audio,null);assert.equal(f.api.state.sound,true);assert.equal(f.get('musicTrackAlt').src,undefined)}
+  f.api.startAliceStory('classic');assert.equal(a.get().scoreScene,'classic');f.api.stopAliceStory();f.api.startAliceStory('immersive');assert.equal(a.get().scoreScene,'immersive');f.api.stopAliceStory();f.api.setWish('生日快乐');assert.equal(a.get().scoreScene,'wish');f.api.finishWishShow(true);f.api.setWish('magic');assert.equal(a.get().scoreScene,'love');f.api.finishWishShow(true);f.api.finale();assert.equal(a.get().scoreScene,'finale');assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,true);
  });
  await test('scene score crossfades preserve gain continuity selected cue and ambient bookmark',async()=>{
   const f=fixture({audioContext:FakeAudioContext}),a=f.audioApi;f.api.setAutoPlay(false);a.setSound(true);await tick();mixFor(f);const decks=a.getMusicDecks(),main=decks[0],alt=decks[1];main.element.currentTime=44;
@@ -121,15 +129,107 @@ function mixFor(f,seconds=2){f.mixTime??=0;for(let t=0;t<seconds*1000;t+=50){f.m
   const f=fixture({audioContext:FakeAudioContext}),a=f.audioApi;a.setSound(true);await tick();mixFor(f);const decks=a.getMusicDecks(),alt=decks[1];alt.element.play=()=>Promise.reject(Error('not loaded'));f.api.specialShow('heart');await tick();mixFor(f);assert(a.get().musicFailed);assert(!decks[0].element.paused);assert.equal(decks[0].weight,1);assert.equal(a.soundPreferences.music,true);alt.element.play=()=>{alt.element.paused=false;return Promise.resolve()};f.get('musicBtn').listeners.click();await tick();mixFor(f);assert(!a.get().musicFailed);assert.equal(alt.weight,1);assert.equal(alt.element.currentTime,0);
  });
  await test('scene score follow-show preference persists and chapter jumps align the soundtrack to the selected act',async()=>{
-  const storage=new Map(),f=fixture({audioContext:FakeAudioContext,storage}),a=f.audioApi;f.api.setAutoPlay(false);a.setSound(true);await tick();f.api.startAliceStory('classic');await tick();mixFor(f);const deck=a.getMusicDecks().find(d=>d.key==='childhood');deck.element.currentTime=48;f.api.seekStoryAct(3);mixFor(f);assert.equal(deck.element.currentTime,36);assert.equal(a.get().scoreScene,'classic');f.get('scoreAutoInput').listeners.change({target:{checked:false}});await tick();mixFor(f);assert.equal(a.get().scoreScene,'ambient');const reopened=fixture({storage});assert.equal(reopened.audioApi.soundPreferences.followShows,false);assert.equal(reopened.api.state.sound,false);assert.equal(reopened.api.state.auto,false);f.get('scoreAutoInput').listeners.change({target:{checked:true}});await tick();mixFor(f);assert.equal(a.get().scoreScene,'classic');assert.equal(f.api.state.auto,false);
+  const storage=new Map(),f=fixture({audioContext:FakeAudioContext,storage}),a=f.audioApi;f.api.setAutoPlay(false);a.setSound(true);await tick();f.api.startAliceStory('classic');await tick();mixFor(f);const deck=a.getMusicDecks().find(d=>d.key==='childhood');deck.element.currentTime=48;f.api.seekStoryAct(3);mixFor(f);assert.equal(deck.element.currentTime,36);assert.equal(a.get().scoreScene,'classic');f.get('scoreAutoInput').listeners.change({target:{checked:false}});await tick();mixFor(f);assert.equal(a.get().scoreScene,'ambient');const reopened=fixture({storage});assert.equal(reopened.audioApi.soundPreferences.followShows,false);assert.equal(reopened.api.state.sound,true);assert.equal(reopened.api.state.auto,false);f.get('scoreAutoInput').listeners.change({target:{checked:true}});await tick();mixFor(f);assert.equal(a.get().scoreScene,'classic');assert.equal(f.api.state.auto,false);
  });
  await test('scene score secret remains exact-submit only and adds no trigger hints or restored show state',()=>{
   const storage=new Map(),f=fixture({storage}),a=f.audioApi;f.api.setAutoPlay(false);f.api.setWish('我爱你呀');assert.equal(a.get().scoreScene,'wish');f.api.finishWishShow(true);f.api.setWish('magic');assert.equal(a.get().scoreScene,'love');assert.equal(f.get('scoreTitle').textContent,'Reverie');assert(!f.get('scoreCredits').innerHTML.includes('我爱你'));assert(!f.get('scoreCredits').innerHTML.includes('彩蛋'));const reopened=fixture({storage});assert.equal(reopened.api.get().textCloud,null);assert.equal(reopened.audioApi.get().scoreScene,'ambient');assert.equal(reopened.api.state.auto,false);
  });
- await test('audio starts silent with no context or music request and restores only mix preferences',()=>{
-  const storage=new Map([['fireworks-theater:preferences:v1',JSON.stringify({auto:false,effect:'mix',palette:'rainbow',view:'3d',audio:{music:true,effects:false,musicVolume:.32,effectsVolume:7}})]]),f=fixture({storage,audioContext:FakeAudioContext});
-  assert.equal(f.api.state.sound,false);assert.equal(f.audioApi.get().audio,null);assert.equal(f.get('soundInput').checked,false);assert.equal(f.audioApi.soundPreferences.musicVolume,.32);assert.equal(f.audioApi.soundPreferences.effectsVolume,1);assert.equal(f.audioApi.soundPreferences.effects,false);assert.equal(f.api.state.auto,false);assert.equal(f.api.get().textCloud,null);
- });
+
+await test("audio defaults on but remains lazy until a trusted interaction and restores only mix preferences", () => {
+    const storage = new Map([
+        [
+          "fireworks-theater:preferences:v1",
+          JSON.stringify({
+            auto: false,
+            effect: "mix",
+            palette: "rainbow",
+            view: "3d",
+            audio: {
+              music: true,
+              effects: false,
+              musicVolume: 0.32,
+              effectsVolume: 7,
+            },
+          }),
+        ],
+      ]),
+      f = fixture({ storage, audioContext: FakeAudioContext });
+    assert.equal(f.api.state.sound, true);
+    assert.equal(f.audioApi.get().audio, null);
+    assert.equal(f.audioApi.get().audioUnlocked, false);
+    assert.equal(f.get("soundInput").checked, true);
+    assert.equal(f.get("musicBtn").attrs["aria-pressed"], "false");
+    assert.match(f.get("musicStatus").textContent, /首次操作/);
+    assert.equal(f.audioApi.soundPreferences.musicVolume, 0.32);
+    assert.equal(f.audioApi.soundPreferences.effectsVolume, 1);
+    assert.equal(f.audioApi.soundPreferences.effects, false);
+    assert.equal(f.api.state.auto, false);
+    assert.equal(f.api.get().textCloud, null);
+    f.sandbox.document.listeners.pointerdown({
+      isTrusted: false,
+      target: { closest: () => null },
+    });
+    assert.equal(f.audioApi.get().audioUnlocked, false);
+    f.sandbox.document.listeners.pointerdown({
+      isTrusted: true,
+      target: { closest: () => null },
+    });
+    assert.equal(f.audioApi.get().audioUnlocked, true);
+    assert(f.audioApi.get().audio);
+    assert(!f.get("musicTrack").paused);
+  });
+await test("explicit mute wins over a later bubbling audio unlock event", () => {
+    const f = fixture({ audioContext: FakeAudioContext });
+    f.get("soundBtn").listeners.click();
+    assert.equal(f.api.state.sound, false);
+    f.sandbox.document.listeners.pointerdown({
+      isTrusted: true,
+      target: { closest: () => null },
+    });
+    assert.equal(f.api.state.sound, false);
+    assert.equal(f.audioApi.get().audioUnlocked, false);
+    assert.equal(f.audioApi.get().audio, null);
+    assert(f.get("musicTrack").paused);
+  });
+await test("music button itself unlocks and starts default-on audio without toggling its preference", () => {
+    const f = fixture({ audioContext: FakeAudioContext });
+    f.get("musicBtn").listeners.click();
+    assert.equal(f.api.state.sound, true);
+    assert.equal(f.audioApi.soundPreferences.music, true);
+    assert.equal(f.audioApi.get().audioUnlocked, true);
+    assert(f.audioApi.get().audio);
+    assert(!f.get("musicTrack").paused);
+  });
+await test("a delayed Web Audio resume finishes without another sound toggle", async () => {
+    class DelayedAudioContext extends FakeAudioContext {
+      constructor() {
+        super();
+        this.state = "suspended";
+        this.resumes = 0;
+      }
+      resume() {
+        this.resumes++;
+        return new Promise(
+          (resolve) =>
+            (this.finishResume = () => {
+              this.state = "running";
+              resolve();
+            }),
+        );
+      }
+    }
+    const f = fixture({ audioContext: DelayedAudioContext });
+    f.audioApi.unlockAudio();
+    const engine = f.audioApi.get();
+    assert.equal(engine.audio.resumes, 1);
+    assert.equal(engine.audio.state, "suspended");
+    engine.audio.finishResume();
+    await tick();
+    assert.equal(engine.audio.state, "running");
+    f.api.launch(240, 160);
+    assert(engine.soundVoices.size > 0);
+  });
+
  await test('audio caches finite layered buffers and bounds mobile polyphony without changing show state',()=>{
   const f=fixture({width:390,height:844,audioContext:FakeAudioContext}),a=f.audioApi;f.api.setAutoPlay(false);a.setSound(true);const engine=a.get();assert(engine.musicBus);assert.equal(engine.soundBuffers.length,1);assert.equal(engine.launchBuffers.length,13);
   for(const b of [...engine.soundBuffers,...engine.launchBuffers]){const d=b.getChannelData(0);let peak=0,energy=0;for(const n of d){assert(Number.isFinite(n));peak=Math.max(peak,Math.abs(n));energy+=n*n}assert(peak>.1&&peak<1);assert(Math.sqrt(energy/d.length)>.005);assert(Math.abs(d[d.length-1])<.01)}
@@ -187,7 +287,7 @@ function mixFor(f,seconds=2){f.mixTime??=0;for(let t=0;t<seconds*1000;t+=50){f.m
   const f=fixture({width:390,height:844}),a=f.api;a.setAutoPlay(false);a.setViewMode('3d');a.setWish('magic');const show=a.get().textCloud,stem=a.meshRoseGreens.find(p=>p.kind===2);for(let rank=0;rank<3;rank++){let previous;for(let age=13.8+rank*.65;age<20.2+rank*.65;age+=1/120){show.age=age;const q=a.meshRosePetalState(show,rank,stem);if(q&&previous){assert(Math.abs(q.p.rim-previous.p.rim)<.04,'stem width jumped');assert(Math.abs(q.alpha-previous.alpha)<.03,'stem opacity jumped')}previous=q}const at=18.6+rank*.65;for(const p of a.meshRoseGreens){show.age=at-.0001;const before=a.meshRosePetalState(show,rank,p);show.age=at+.0001;const after=a.meshRosePetalState(show,rank,p);assert(before&&after);assert(Math.abs(before.alpha-after.alpha)<.0001);assert(Math.hypot(before.center.x-after.center.x,before.center.y-after.center.y,before.center.z-after.center.z)<.2)}}
  });
  await test('approved rose context loss keeps the scene alive and restores GPU without restarting',async()=>{
-  const mock=fakeGpu(),f=fixture({width:568,height:320,webgl:mock.gl,offscreen:true}),a=f.api;a.setAutoPlay(false);a.setViewMode('3d');a.setWish('magic');const show=a.get().textCloud,r=a.prepareAcceptedRoses();await tick();show.age=17.5;a.drawRoseScene(show);assert.equal(r.software,false);let prevented=false;r.canvas.listeners.webglcontextlost({preventDefault(){prevented=true}});assert(prevented);a.drawRoseScene(show);assert.equal(r.software,true);assert.equal(show.age,17.5);r.canvas.listeners.webglcontextrestored();a.drawRoseScene(show);await tick();a.drawRoseScene(show);assert.equal(r.software,false);assert.equal(a.get().textCloud,show);assert.equal(a.state.auto,false);assert.equal(a.state.sound,false);
+  const mock=fakeGpu(),f=fixture({width:568,height:320,webgl:mock.gl,offscreen:true}),a=f.api;a.setAutoPlay(false);a.setViewMode('3d');a.setWish('magic');const show=a.get().textCloud,r=a.prepareAcceptedRoses();await tick();show.age=17.5;a.drawRoseScene(show);assert.equal(r.software,false);let prevented=false;r.canvas.listeners.webglcontextlost({preventDefault(){prevented=true}});assert(prevented);a.drawRoseScene(show);assert.equal(r.software,true);assert.equal(show.age,17.5);r.canvas.listeners.webglcontextrestored();a.drawRoseScene(show);await tick();a.drawRoseScene(show);assert.equal(r.software,false);assert.equal(a.get().textCloud,show);assert.equal(a.state.auto,false);assert.equal(a.state.sound,true);
  });
  await test('GPU finale preserves every material size rotation flutter hue cell and brightness',()=>{
   const f=fixture(),base={x:160,y:250,size:15,depth:.9,rotation:.6,seed:1.7,hue:337,variant:2,life:3,max:4,projectedScale:2,renderAlpha:.8,spatial:{layer:'near'},history:[]};
@@ -259,22 +359,98 @@ function mixFor(f,seconds=2){f.mixTime??=0;for(let t=0;t<seconds*1000;t+=50){f.m
   const f=fixture({width:390,height:844});f.get('writeBtn').listeners.click();f.get('wishInput').value='平安喜乐';f.sandbox.innerHeight=480;f.api.resize();assert(!f.get('writePanel').hidden);assert.equal(f.get('wishInput').value,'平安喜乐');assert.equal(f.get('writeBtn').attrs['aria-expanded'],'true');
   f.sandbox.innerWidth=844;f.sandbox.innerHeight=390;f.api.resize();assert(!f.get('writePanel').hidden);assert(f.get('appearancePanel').hidden);f.sandbox.innerWidth=1280;f.sandbox.innerHeight=800;f.api.resize();assert(!f.get('appearancePanel').hidden);assert(!f.api.hasOpenPanel());f.sandbox.innerWidth=320;f.sandbox.innerHeight=568;f.api.resize();assert(f.get('appearancePanel').hidden);assert(!f.api.hasOpenPanel());assert.equal(f.get('wishInput').value,'平安喜乐');
  });
- await test('landscape viewing enters native fullscreen before locking and releases only its own lock',async()=>{
-  const f=fixture({width:390,height:844}),doc=f.sandbox.document,order=[];f.api.setAutoPlay(false);doc.documentElement.requestFullscreen=async()=>{order.push('fullscreen');doc.fullscreenElement=doc.documentElement;doc.listeners.fullscreenchange()};doc.exitFullscreen=async()=>{order.push('exit');doc.fullscreenElement=null;doc.listeners.fullscreenchange()};f.sandbox.screen={orientation:{lock:async value=>order.push(value),unlock:()=>order.push('unlock')}};
-  await f.get('landscapeBtn').listeners.click();assert.deepEqual(order,['fullscreen','landscape']);assert.equal(f.get('landscapeBtn').textContent,'退出横屏');assert.equal(f.get('landscapeBtn').attrs['aria-pressed'],'true');await f.get('landscapeBtn').listeners.click();assert.deepEqual(order,['fullscreen','landscape','unlock','exit']);assert.equal(f.get('landscapeBtn').attrs['aria-pressed'],'false');assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,false);assert.equal(f.api.get().rockets.length,0);
-  doc.fullscreenElement=doc.documentElement;order.length=0;await f.get('landscapeBtn').listeners.click();await f.get('landscapeBtn').listeners.click();assert.deepEqual(order,['landscape','unlock']);assert.equal(doc.fullscreenElement,doc.documentElement,'existing fullscreen belongs to the user');
- });
- await test('landscape viewing handles unsupported and rejected APIs without getting stuck or starting fireworks',async()=>{
-  for(const rejection of ['unsupported','fullscreen','orientation']){const f=fixture({width:390,height:844}),doc=f.sandbox.document;f.api.setAutoPlay(false);if(rejection!=='unsupported'){doc.documentElement.requestFullscreen=async()=>{if(rejection==='fullscreen')throw Error('denied');doc.fullscreenElement=doc.documentElement;doc.listeners.fullscreenchange()};doc.exitFullscreen=async()=>{doc.fullscreenElement=null;doc.listeners.fullscreenchange()};f.sandbox.screen={orientation:{lock:async()=>{throw Error('unsupported')},unlock(){throw Error('must not unlock an unowned lock')}}}}
-   await f.get('landscapeBtn').listeners.click();assert.equal(f.get('landscapeBtn').disabled,false);assert.match(f.get('toast').textContent,/横放/);assert.equal(f.get('landscapeBtn').attrs['aria-pressed'],rejection==='orientation'?'true':'false');if(doc.fullscreenElement){await f.get('landscapeBtn').listeners.click();assert.equal(doc.fullscreenElement,null)}assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,false);assert.equal(f.api.get().rockets.length,0);
-  }
- });
+
+await test("landscape viewing enters native fullscreen before locking and releases only its own lock", async () => {
+    const f = fixture({ width: 390, height: 844 }),
+      doc = f.sandbox.document,
+      order = [];
+    f.api.setAutoPlay(false);
+    doc.documentElement.requestFullscreen = async () => {
+      order.push("fullscreen");
+      doc.fullscreenElement = doc.documentElement;
+      doc.listeners.fullscreenchange();
+    };
+    doc.exitFullscreen = async () => {
+      order.push("exit");
+      doc.fullscreenElement = null;
+      doc.listeners.fullscreenchange();
+    };
+    f.sandbox.screen = {
+      orientation: {
+        lock: async (value) => order.push(value),
+        unlock: () => order.push("unlock"),
+      },
+    };
+    await f.get("landscapeBtn").listeners.click();
+    assert.deepEqual(order, ["fullscreen", "landscape"]);
+    assert.equal(f.get("landscapeBtn").textContent, "退出横屏");
+    assert.equal(f.get("landscapeBtn").attrs["aria-pressed"], "true");
+    await f.get("landscapeBtn").listeners.click();
+    assert.deepEqual(order, ["fullscreen", "landscape", "unlock", "exit"]);
+    assert.equal(f.get("landscapeBtn").attrs["aria-pressed"], "false");
+    assert.equal(f.api.state.auto, false);
+    assert.equal(f.api.state.sound, true);
+    assert.equal(f.api.get().rockets.length, 0);
+    doc.fullscreenElement = doc.documentElement;
+    order.length = 0;
+    await f.get("landscapeBtn").listeners.click();
+    await f.get("landscapeBtn").listeners.click();
+    assert.deepEqual(order, ["landscape", "unlock"]);
+    assert.equal(
+      doc.fullscreenElement,
+      doc.documentElement,
+      "existing fullscreen belongs to the user",
+    );
+  });
+await test("landscape viewing handles unsupported and rejected APIs without getting stuck or starting fireworks", async () => {
+    for (const rejection of ["unsupported", "fullscreen", "orientation"]) {
+      const f = fixture({ width: 390, height: 844 }),
+        doc = f.sandbox.document;
+      f.api.setAutoPlay(false);
+      if (rejection !== "unsupported") {
+        doc.documentElement.requestFullscreen = async () => {
+          if (rejection === "fullscreen") throw Error("denied");
+          doc.fullscreenElement = doc.documentElement;
+          doc.listeners.fullscreenchange();
+        };
+        doc.exitFullscreen = async () => {
+          doc.fullscreenElement = null;
+          doc.listeners.fullscreenchange();
+        };
+        f.sandbox.screen = {
+          orientation: {
+            lock: async () => {
+              throw Error("unsupported");
+            },
+            unlock() {
+              throw Error("must not unlock an unowned lock");
+            },
+          },
+        };
+      }
+      await f.get("landscapeBtn").listeners.click();
+      assert.equal(f.get("landscapeBtn").disabled, false);
+      assert.match(f.get("toast").textContent, /横放/);
+      assert.equal(
+        f.get("landscapeBtn").attrs["aria-pressed"],
+        rejection === "orientation" ? "true" : "false",
+      );
+      if (doc.fullscreenElement) {
+        await f.get("landscapeBtn").listeners.click();
+        assert.equal(doc.fullscreenElement, null);
+      }
+      assert.equal(f.api.state.auto, false);
+      assert.equal(f.api.state.sound, true);
+      assert.equal(f.api.get().rockets.length, 0);
+    }
+  });
+
  await test('landscape native exit cancels a pending lock and restores controls',async()=>{
   const f=fixture(),doc=f.sandbox.document;let finish,unlocks=0;doc.documentElement.requestFullscreen=async()=>{doc.fullscreenElement=doc.documentElement;doc.listeners.fullscreenchange()};f.sandbox.screen={orientation:{lock:()=>new Promise(r=>finish=r),unlock:()=>unlocks++}};
   const pending=f.get('landscapeBtn').listeners.click();await tick();assert.equal(f.get('landscapeBtn').disabled,true);doc.fullscreenElement=null;doc.listeners.fullscreenchange();finish();await pending;assert.equal(unlocks,1);assert.equal(f.get('landscapeBtn').disabled,false);assert.equal(f.get('landscapeBtn').attrs['aria-pressed'],'false');
  });
  await test('landscape resize preserves ordinary and blessing comet age order and manual autoplay state',()=>{
-  for(const text of [null,'平安喜乐','我爱你']){const f=fixture({width:390,height:844});f.api.setAutoPlay(false);f.api.setViewMode('3d');if(text)f.api.setWish(text);else f.api.launch(180,230);for(let i=0;i<80;i++)f.api.frame(1000+i*1000/60);const before=f.api.get(),show=before.textCloud,flights=before.rockets.map(r=>({r,age:r.age,duration:r.duration})),order=show?.glyphs.map(g=>({fired:g.fired,born:g.born,launchAt:g.launchAt}));assert(flights.length>0);f.get('writeBtn').listeners.click();f.get('wishInput').value='保留草稿';f.sandbox.innerWidth=1024;f.sandbox.innerHeight=430;f.api.resize();assert(!f.get('writePanel').hidden);assert(f.get('appearancePanel').hidden);assert.equal(f.get('wishInput').value,'保留草稿');assert.equal(f.api.get().rockets.length,flights.length);for(const {r,age,duration}of flights){assert(f.api.get().rockets.includes(r));assert.equal(r.age,age);assert.equal(r.duration,duration);assert(Number.isFinite(r.tx)&&Number.isFinite(r.ty));if(r.wishGlyph!==null)assert.equal(show.glyphs[r.wishGlyph].comet,r)}if(show)assert.deepEqual(show.glyphs.map(g=>({fired:g.fired,born:g.born,launchAt:g.launchAt})),order);f.sandbox.innerWidth=390;f.sandbox.innerHeight=844;f.api.resize();assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,false);assert.equal(f.api.get().rockets.length,flights.length)}
+  for(const text of [null,'平安喜乐','我爱你']){const f=fixture({width:390,height:844});f.api.setAutoPlay(false);f.api.setViewMode('3d');if(text)f.api.setWish(text);else f.api.launch(180,230);for(let i=0;i<80;i++)f.api.frame(1000+i*1000/60);const before=f.api.get(),show=before.textCloud,flights=before.rockets.map(r=>({r,age:r.age,duration:r.duration})),order=show?.glyphs.map(g=>({fired:g.fired,born:g.born,launchAt:g.launchAt}));assert(flights.length>0);f.get('writeBtn').listeners.click();f.get('wishInput').value='保留草稿';f.sandbox.innerWidth=1024;f.sandbox.innerHeight=430;f.api.resize();assert(!f.get('writePanel').hidden);assert(f.get('appearancePanel').hidden);assert.equal(f.get('wishInput').value,'保留草稿');assert.equal(f.api.get().rockets.length,flights.length);for(const {r,age,duration}of flights){assert(f.api.get().rockets.includes(r));assert.equal(r.age,age);assert.equal(r.duration,duration);assert(Number.isFinite(r.tx)&&Number.isFinite(r.ty));if(r.wishGlyph!==null)assert.equal(show.glyphs[r.wishGlyph].comet,r)}if(show)assert.deepEqual(show.glyphs.map(g=>({fired:g.fired,born:g.born,launchAt:g.launchAt})),order);f.sandbox.innerWidth=390;f.sandbox.innerHeight=844;f.api.resize();assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,true);assert.equal(f.api.get().rockets.length,flights.length)}
  });
  await test('rotation preserves paused 2D and 3D bursts and redraws the resized canvas',()=>{
   for(const mode of ['2d','3d']){
@@ -658,7 +834,7 @@ function mixFor(f,seconds=2){f.mixTime??=0;for(let t=0;t<seconds*1000;t+=50){f.m
  });
  await test('phoenix programme loads only on explicit click and dispatches both dimensions',async()=>{
   for(const mode of ['2d','3d']){const f=fixture(),duration=mode==='2d'?22:27;f.api.setAutoPlay(false);f.api.setViewMode(mode);assert.equal(f.sandbox.phoenixLoads.length,0);
-   await f.get('phoenixShowBtn').listeners.click();const s=f.api.getPhoenix();assert.equal(s.status,'ready');assert.equal(s.mode,mode);assert.equal(s.duration,duration);assert.equal(f.get('phoenixProgress').attrs['aria-valuemax'],String(duration));assert.equal(f.api.state.view,mode);assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,false);assert.equal(f.sandbox.phoenixLoads.length,1);assert.equal(s.surface,mode==='2d'?'phoenixFlatStage':'phoenixStage');assert.equal(f.get(s.surface).hidden,false);assert.equal(f.api.get().textCloud,null);
+   await f.get('phoenixShowBtn').listeners.click();const s=f.api.getPhoenix();assert.equal(s.status,'ready');assert.equal(s.mode,mode);assert.equal(s.duration,duration);assert.equal(f.get('phoenixProgress').attrs['aria-valuemax'],String(duration));assert.equal(f.api.state.view,mode);assert.equal(f.api.state.auto,false);assert.equal(f.api.state.sound,true);assert.equal(f.sandbox.phoenixLoads.length,1);assert.equal(s.surface,mode==='2d'?'phoenixFlatStage':'phoenixStage');assert.equal(f.get(s.surface).hidden,false);assert.equal(f.api.get().textCloud,null);
   }
  });
  await test('phoenix preserves preferences, manual autoplay and the previous pause state on return',async()=>{
@@ -689,9 +865,9 @@ function mixFor(f,seconds=2){f.mixTime??=0;for(let t=0;t<seconds*1000;t+=50){f.m
   await f.api.startPhoenixShow();assert.equal(f.api.getPhoenix().status,'error');assert.equal(f.get('phoenixReplayBtn').textContent,'重新点燃');assert.equal(f.get('phoenixReplayBtn').hidden,false);assert.equal(f.get('phoenixPauseBtn').disabled,true);
   f.get('phoenixReplayBtn').listeners.click();await tick();assert.equal(calls,2);assert.equal(f.api.getPhoenix().status,'ready');assert.equal(f.get('phoenixReplayBtn').hidden,true);f.api.stopPhoenixShow();assert.equal(f.get('phoenixHud').hidden,true);
  });
- await test('phoenix uses the shared score gate and pause cancels music without changing the mute preference',async()=>{
-  const f=fixture({audioContext:FakeAudioContext});f.api.setAutoPlay(false);await f.api.startPhoenixShow();assert.equal(f.audioApi.get().scoreScene,'phoenix');assert.equal(f.api.state.sound,false);assert.equal(f.audioApi.get().audio,null);
-  f.audioApi.setSound(true);await tick();mixFor(f);assert(f.audioApi.getMusicDecks().some(d=>d.key==='titan'));f.api.togglePause();assert(f.audioApi.getMusicDecks().every(d=>d.element.paused));assert.equal(f.api.state.sound,true);f.api.stopPhoenixShow();assert.equal(f.audioApi.get().scoreScene,'ambient');assert.equal(f.api.state.sound,true);
+ await test("phoenix uses the shared score gate after lazy unlock and pause preserves the mute preference",async()=>{
+  const f=fixture({audioContext:FakeAudioContext});f.api.setAutoPlay(false);await f.api.startPhoenixShow();assert.equal(f.audioApi.get().scoreScene,'phoenix');assert.equal(f.api.state.sound,true);assert.equal(f.audioApi.get().audio,null);
+  f.audioApi.unlockAudio();await tick();mixFor(f);assert(f.audioApi.getMusicDecks().some(d=>d.key==='titan'));f.api.togglePause();assert(f.audioApi.getMusicDecks().every(d=>d.element.paused));assert.equal(f.api.state.sound,true);f.api.stopPhoenixShow();assert.equal(f.audioApi.get().scoreScene,'ambient');assert.equal(f.api.state.sound,true);
  });
  await test('phoenix is exclusive with ordinary wishes and Alice shows without changing their hidden trigger',async()=>{
   const f=fixture();f.api.setAutoPlay(false);f.api.setWish('平安喜乐');await f.api.startPhoenixShow();assert.equal(f.api.get().textCloud,null);assert.equal(f.api.get().story,null);
