@@ -8,7 +8,7 @@
     />
     <meta name="theme-color" content="#060b16" />
     <title>烟花剧场 · 让夜空回应你</title>
-    <!-- THEATRE_STYLE -->
+    <link rel="stylesheet" href="app.css">
   </head>
   <body>
     <canvas
@@ -502,7 +502,324 @@
             </p>
             <button type="button" id="exportSourceBtn">导出可编辑工程</button>
             <p id="sourceExportStatus" role="status"></p>
-            <!-- THEATRE_NOTICES -->
+            <details><summary>LICENSE</summary><pre style="white-space:pre-wrap;max-height:16rem;overflow:auto;font:11px/1.6 monospace">MIT License
+
+Copyright (c) 2026 Fireworks Theatre contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</pre></details>
+<details><summary>docs/ASSETS.md</summary><pre style="white-space:pre-wrap;max-height:16rem;overflow:auto;font:11px/1.6 monospace"># Asset notices and licenses
+
+## Scope of the MIT grant
+
+The project's original source code, locally synthesized burst/tail/wind audio,
+and procedural rose implementation are MIT-licensed by the project owner.
+That grant does **not** license bundled music, third-party runtimes/models,
+user-attested paid media, generated-model service outputs, or the OpenAI-made
+rose photo. See `assets/licenses.json` for the machine-readable matrix.
+
+## Required notices
+
+### Three.js — MIT
+
+The vendored Three.js runtime is distributed under the MIT License. Preserve
+`assets/vendor/three/LICENSE` when redistributing it. Primary source:
+&lt;https://github.com/mrdoob/three.js/blob/dev/LICENSE&gt;.
+
+### MediaPipe Tasks Vision and Hand Landmarker — Apache-2.0
+
+The vendored MediaPipe runtime/WASM and `hand_landmarker.task` are retained
+under Apache License 2.0; preserve `assets/vendor/mediapipe/LICENSE`.
+Primary license: &lt;https://www.apache.org/licenses/LICENSE-2.0/&gt;. Model card:
+&lt;https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Hand%20Tracking%20%28Lite_Full%29%20with%20Fairness%20Oct%202021.pdf&gt;.
+
+### Music by Scott Buckley — CC BY 4.0
+
+Credit **Scott Buckley**, link the work page and
+&lt;https://creativecommons.org/licenses/by/4.0/&gt;, and indicate the changes
+listed below. No endorsement is implied. The table below retains each shipped
+track's credits and change notes.
+
+| Shipped file | Work / official page | Current local change note |
+| --- | --- | --- |
+| `moonlight.mp3` | [Moonlight](https://www.scottbuckley.com.au/library/moonlight/) | Full recording; transcoded to 128 kbps stereo MP3/44.1 kHz. |
+| `hope.mp3` | [A Kind Of Hope](https://www.scottbuckley.com.au/library/a-kind-of-hope/) | 12–87 s excerpt; transcode, constant gain, edge fades. |
+| `computations.mp3` | [Computations in a Snowstorm](https://www.scottbuckley.com.au/library/computations/) | 25–100 s excerpt; transcode, constant gain, edge fades. |
+| `reverie.mp3` | [Reverie](https://www.scottbuckley.com.au/library/reverie/) | 30–100 s excerpt; transcode, constant gain, edge fades. |
+| `childhood.mp3` | [Childhood](https://www.scottbuckley.com.au/library/childhood/) | 0–100 s excerpt; transcode, constant gain, edge fades. |
+| `celestial.mp3` | [Celestial](https://www.scottbuckley.com.au/library/celestial/) | 25–130 s excerpt; transcode, constant gain, edge fades. |
+| `titan.mp3` | [Titan](https://www.scottbuckley.com.au/library/titan/) | 100–140 s excerpt; transcode, constant gain, edge fades. |
+| `signal.mp3` | [Signal to Noise](https://www.scottbuckley.com.au/library/signal-to-noise/) | 40–115 s excerpt; transcode, constant gain, edge fades. |
+| `snowfall.mp3` | [Snowfall](https://www.scottbuckley.com.au/library/snowfall/) | 28–103 s excerpt; transcode, constant gain, edge fades. |
+
+All nine tracks use runtime level correction, programme envelopes, smooth
+effects ducking, and a shared output ceiling. Playback speed and pitch are
+unchanged. See Scott Buckley's [use information](https://www.scottbuckley.com.au/library/using-this-music/).
+
+## Media not covered by the MIT grant
+
+- **Tripo dragon and phoenix models:** the user confirms the jobs ran on a paid
+  Tripo plan with project-original generated concepts as inputs. This is
+  recorded as a user-confirmed paid entitlement, not independent invoice
+  verification. Terms: &lt;https://www.tripo3d.ai/terms&gt;.
+- **Aigei dragon, phoenix, glass, and launch audio:** the user confirms paid
+  access and a right to use these four media items. Each remains
+  `user_attested_not_independently_verified`; this repository does not claim
+  CC0, MIT, or formal legal clearance. Provider FAQ:
+  &lt;https://www.aigei.com/faq/doc/45.html&gt;.
+- **Thunder:** SoundDino represents that its thunderstorm effect may be
+  incorporated into commercial projects. That provider representation does not
+  independently verify a right to redistribute the raw asset. Source:
+  &lt;https://sounddino.com/zh/effects/thunderstorm/&gt;.
+- **Rose image:** the photo was generated with OpenAI and carries embedded
+  C2PA provenance evidence. This is provenance information, not a replacement
+  for any applicable service terms.
+
+When redistributing a build, retain these notices and the corresponding
+third-party license texts. Do not represent any user-attested paid media as
+open-source material.
+</pre></details>
+<details><summary>assets/vendor/three/LICENSE</summary><pre style="white-space:pre-wrap;max-height:16rem;overflow:auto;font:11px/1.6 monospace">The MIT License
+
+Copyright © 2010-2025 three.js authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</pre></details>
+<details><summary>assets/vendor/mediapipe/LICENSE</summary><pre style="white-space:pre-wrap;max-height:16rem;overflow:auto;font:11px/1.6 monospace">
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+</pre></details>
           </details>
           <details class="music-credit">
             <summary>音乐来源与授权</summary>
@@ -1526,6 +1843,6 @@
     </button>
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-    <!-- THEATRE_BOOT -->
+    <div id="theatreLoading" role="status" style="position:fixed;inset:0;display:grid;place-content:center;background:#060b16;color:#edce91;z-index:10000;font:15px/1.8 sans-serif;text-align:center">正在打开烟花剧场…</div><script>window.__THEATRE_MANIFEST__={"revision":30,"modules":["theatre/src/shows/phoenix/index.js","theatre/vendor/three/build/three.module.js","theatre/vendor/three/build/three.core.js","theatre/vendor/three/examples/jsm/loaders/GLTFLoader.js","theatre/vendor/three/examples/jsm/utils/BufferGeometryUtils.js","theatre/src/shows/phoenix/stage.js","theatre/src/shows/phoenix/camera.js","theatre/src/shows/phoenix/fireworks.js","theatre/src/shows/phoenix2d/index.js","theatre/src/shows/phoenix2d/rig.js","theatre/src/shows/phoenix2d/effects.js","theatre/src/shows/dragon/index.js","theatre/src/shows/dragon/stage.js","theatre/src/shows/dragon/celestial.js","theatre/src/shows/dragon/pipeline.js","theatre/src/shows/dragon/fireworks.js","theatre/src/shows/dragon/camera.js","theatre/src/shows/dragon/impact.js","theatre/src/shows/dragon/attack.js"],"shows":{"phoenix3d":{"entry":"theatre/src/shows/phoenix/index.js","assets":["phoenix-3d-review/phoenix-rig-v16.glb"]},"phoenix2d":{"entry":"theatre/src/shows/phoenix2d/index.js","assets":["phoenix-review/rig-flight.png","phoenix-review/rig-upright.png","phoenix-review/rig-feathers.png"]},"dragon":{"entry":"theatre/src/shows/dragon/index.js","assets":["dragon-3d-review/dragon-show-v14.glb","dragon-3d-review/show-foot-motion-v14.json","dragon-3d-review/theatre-music-v27.wav","dragon-3d-review/theatre-effects-v29.wav"]}},"resources":{"theatre/src/shows/phoenix/index.js":{"path":"modules/src/shows/phoenix/index.js","type":"text/javascript","bytes":4731,"sha256":"53ebccee728a726f7d558eee40a8d681d33fc57d4433877c99a95ba470a9c19f"},"theatre/vendor/three/build/three.module.js":{"path":"modules/vendor/three/build/three.module.js","type":"text/javascript","bytes":341417,"sha256":"39f68a74c4f00288c006435aaea81ed10d180bda596b033b651a917de73b7c08"},"theatre/vendor/three/build/three.core.js":{"path":"modules/vendor/three/build/three.core.js","type":"text/javascript","bytes":381420,"sha256":"c7c9820b79a7a1b49bb9ca089d5b22338d78b1b80407e8c2e29968cb5eb91a0b"},"theatre/vendor/three/examples/jsm/loaders/GLTFLoader.js":{"path":"modules/vendor/three/examples/jsm/loaders/GLTFLoader.js","type":"text/javascript","bytes":44908,"sha256":"a7f895f4097ad4ac9396d7ed7a7ab3fbeaa5465f5e3f424d539ec63b1cf1e82b"},"theatre/vendor/three/examples/jsm/utils/BufferGeometryUtils.js":{"path":"modules/vendor/three/examples/jsm/utils/BufferGeometryUtils.js","type":"text/javascript","bytes":12949,"sha256":"d2ac2655ab1a711b7fbf2bba66f9755204ba98ec3c5311702ff70d914623bfe7"},"theatre/src/shows/phoenix/stage.js":{"path":"modules/src/shows/phoenix/stage.js","type":"text/javascript","bytes":12948,"sha256":"aed82a74219bdc7158213f2f3c45e9da5a0e4ccf0610fa847de1a77cd2913a02"},"theatre/src/shows/phoenix/camera.js":{"path":"modules/src/shows/phoenix/camera.js","type":"text/javascript","bytes":3502,"sha256":"e1d952fff8bf8e44774417b7b237ebe14d8408d4c100424d0cc61aaeb75a98ad"},"theatre/src/shows/phoenix/fireworks.js":{"path":"modules/src/shows/phoenix/fireworks.js","type":"text/javascript","bytes":8374,"sha256":"a1568ab353baf8b4f6b7b74fa7b200bfbc9fa757d3a62c7d5739033bbd821645"},"theatre/src/shows/phoenix2d/index.js":{"path":"modules/src/shows/phoenix2d/index.js","type":"text/javascript","bytes":6354,"sha256":"9969763b98b1fd78bf9218e4f08f3471e294043e84053d79eeb3d77bb9fefc66"},"theatre/src/shows/phoenix2d/rig.js":{"path":"modules/src/shows/phoenix2d/rig.js","type":"text/javascript","bytes":11085,"sha256":"471901b5edc27af46e04c612a60c43dd28602566569acd59f859f398f92aee4a"},"theatre/src/shows/phoenix2d/effects.js":{"path":"modules/src/shows/phoenix2d/effects.js","type":"text/javascript","bytes":11736,"sha256":"62903d2269d5e0f5b85ca115aa2442d34468b8397a1c57c35715110ec5eca82c"},"theatre/src/shows/dragon/index.js":{"path":"modules/src/shows/dragon/index.js","type":"text/javascript","bytes":10039,"sha256":"3a8cf9b118d81d33cd430b3ddbf6a11c2a8148c2a3b2d2d4cd81c548d58a62cc"},"theatre/src/shows/dragon/stage.js":{"path":"modules/src/shows/dragon/stage.js","type":"text/javascript","bytes":6187,"sha256":"65d6caadb4136b990eb602aa985811969440f516f0636f4aab18a6680aa4ec43"},"theatre/src/shows/dragon/celestial.js":{"path":"modules/src/shows/dragon/celestial.js","type":"text/javascript","bytes":9554,"sha256":"fa261a910dfdb702fed5ec88e9191fb384fe51cbd2084cab1685e1cff79072b5"},"theatre/src/shows/dragon/pipeline.js":{"path":"modules/src/shows/dragon/pipeline.js","type":"text/javascript","bytes":6607,"sha256":"067cdba948314078dd83caea8dd4117fa95fc495277ecd9c38ac3d4627402766"},"theatre/src/shows/dragon/fireworks.js":{"path":"modules/src/shows/dragon/fireworks.js","type":"text/javascript","bytes":5781,"sha256":"fbd023bc1c269a9b80801aa4dd7235faf2ceca706a16159ea39387157b387643"},"theatre/src/shows/dragon/camera.js":{"path":"modules/src/shows/dragon/camera.js","type":"text/javascript","bytes":731,"sha256":"e22f9af3e65777b10f4677a34d31307ec9f02962d319f29bc1673e004e8e8298"},"theatre/src/shows/dragon/impact.js":{"path":"modules/src/shows/dragon/impact.js","type":"text/javascript","bytes":7924,"sha256":"dcc6b85dbd1b7be882a95935be1385e0405766a7ea12c9de37a2636b91101555"},"theatre/src/shows/dragon/attack.js":{"path":"modules/src/shows/dragon/attack.js","type":"text/javascript","bytes":6747,"sha256":"684dea0b4c778c00595838c90f8cf4fc9bf6af6e2b18211a3c78b830d9820dcc"},"phoenix-3d-review/phoenix-rig-v16.glb":{"path":"assets/models/phoenix-rig-v16.webp.glb","type":"model/gltf-binary","bytes":20662640,"sha256":"762f9182855d68913497c31a7f3dda193e49b4cef70f4a780c1a5290aeb7272b"},"phoenix-review/rig-flight.png":{"path":"assets/images/rig-flight.webp","type":"image/webp","bytes":1834646,"sha256":"751b053b3e9297f250fe053316885c2d4f7644476e72dd3a4ee47552d14327ef"},"phoenix-review/rig-upright.png":{"path":"assets/images/rig-upright.webp","type":"image/webp","bytes":1530662,"sha256":"615563041322254bb609d42a4eb0d5cdea2231b38c54a18cbb52fd83777f4bfc"},"phoenix-review/rig-feathers.png":{"path":"assets/images/rig-feathers.webp","type":"image/webp","bytes":1127100,"sha256":"86b9d6f73ca7d864282fc9090c83e0cf1884978140eb9fda4df7bd5c17c5604c"},"dragon-3d-review/dragon-show-v14.glb":{"path":"assets/models/dragon-show-v14.webp.glb","type":"model/gltf-binary","bytes":21326344,"sha256":"4765defc60e9d94c3a8d21cb0d4ffa0a143fbdb853823108b4e788b3788ae6b3"},"dragon-3d-review/show-foot-motion-v14.json":{"path":"assets/data/show-foot-motion-v14.json","type":"application/json","bytes":162424,"sha256":"32a0256ec3f35c741b60767a9913dc740b2f30e4a44a647981be26b3a387c44c"},"dragon-3d-review/theatre-music-v27.wav":{"path":"assets/audio/theatre-music-v27.flac","type":"audio/flac","bytes":1599216,"sha256":"89959c8285876dd6fd3efd5d063aedbd63682059b4b75611afc9c41edc4282b7"},"dragon-3d-review/theatre-effects-v29.wav":{"path":"assets/audio/theatre-effects-v30-glass.flac","type":"audio/flac","bytes":814518,"sha256":"dfc197d9dac18953a507fc0f39b8670a24b14a69120af214cf679c3b6bf1352a"},"fireworks-audio/moonlight.mp3":{"path":"assets/audio/music/moonlight.mp3","type":"audio/mpeg","bytes":4070721,"sha256":"47ea0944f5a0f952a47bfa3b31f193521b98f0168cebd83cd68041236f669c63"},"fireworks-audio/hope.mp3":{"path":"assets/audio/music/hope.mp3","type":"audio/mpeg","bytes":1201440,"sha256":"9179c9db4ebe35fa6d05493189d1fadcbe2af8444a07e99b2d8f8b4ceb6a112c"},"fireworks-audio/computations.mp3":{"path":"assets/audio/music/computations.mp3","type":"audio/mpeg","bytes":1201453,"sha256":"f6d72edbc5617ef87673591564e6efa292170f710d1fcd5e122d4b2aa661f397"},"fireworks-audio/reverie.mp3":{"path":"assets/audio/music/reverie.mp3","type":"audio/mpeg","bytes":1121185,"sha256":"50e382810be87064aef7e44adea51d6e1dd76a6d457bc03229e56ea3a372c02c"},"fireworks-audio/childhood.mp3":{"path":"assets/audio/music/childhood.mp3","type":"audio/mpeg","bytes":1601422,"sha256":"cc37dcb41e2bebcb460fca8300b8f2679366a527dd5126427d9d2d7dd9f3d360"},"fireworks-audio/celestial.mp3":{"path":"assets/audio/music/celestial.mp3","type":"audio/mpeg","bytes":1681252,"sha256":"60cdaf225ff13059b0f48535f8ffdf1e1c77b3147b5fabeaa31311acbd298496"},"fireworks-audio/titan.mp3":{"path":"assets/audio/music/titan.mp3","type":"audio/mpeg","bytes":641366,"sha256":"8b40008f5d767da27482c110dd21b2a95200da0bb7cdd0dced1bf98aa3e98ef2"},"fireworks-audio/signal.mp3":{"path":"assets/audio/music/signal.mp3","type":"audio/mpeg","bytes":1201441,"sha256":"5f45d0990a820422c9f9e8049bdfb4ca594ae5a5a0af8aa36efb29c0d23935ac"},"fireworks-audio/snowfall.mp3":{"path":"assets/audio/music/snowfall.mp3","type":"audio/mpeg","bytes":1201434,"sha256":"3416fc4a80925d969653429bce08bdabb9700ce1100882d79d4cd2e56419edb6"},"vision/vision_bundle.mjs":{"path":"assets/vendor/mediapipe/vision_bundle.mjs","type":"text/javascript","bytes":136870,"sha256":"e77f281f9619150d937023c355bae170e9120e3b9e43f1e23a2a7bee07197669"},"vision/wasm/vision_wasm_internal.js":{"path":"assets/vendor/mediapipe/wasm/vision_wasm_internal.js","type":"text/javascript","bytes":209826,"sha256":"9440cf0cc0cea21800e31581ec32aeedcc5fbf9df4509796bbc7d3f99e52ab9c"},"vision/wasm/vision_wasm_internal.wasm":{"path":"assets/vendor/mediapipe/wasm/vision_wasm_internal.wasm","type":"application/wasm","bytes":9423986,"sha256":"f82a8e6c05e08a44cc9f9e7ec5f845935bcbb1b1500ebe8c2f4812fb4e2917dc"},"vision/wasm/vision_wasm_nosimd_internal.js":{"path":"assets/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.js","type":"text/javascript","bytes":209735,"sha256":"abe9b6fbeaf86fcb53a5edce3926c82ccb0619e18fed4d9d9ce561ee7f55e054"},"vision/wasm/vision_wasm_nosimd_internal.wasm":{"path":"assets/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.wasm","type":"application/wasm","bytes":9294247,"sha256":"38b61feab2fd7934e05cbe9f68baa308978a5e3b7f85c1913bb8ae89b8ef8b97"},"vision/hand_landmarker.task":{"path":"assets/vendor/mediapipe/hand_landmarker.task","type":"application/octet-stream","bytes":7819105,"sha256":"fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1"},"initial/acceptedRoseAsset":{"path":"assets/data/accepted-rose-asset.json","type":"application/json","bytes":4264067,"sha256":"66b86e849bcf5af7e3e53164cbbfac4e76f2d5bf4d70115d8b118b0d735ea94d"},"initial/fireworkSamplesV25":{"path":"assets/data/firework-samples-v25.json","type":"application/json","bytes":2338306,"sha256":"5ebf2183b82c8b114f0374c792bf220c53d6ea431d771b4268f9a2533c7423a8"},"initial/phoenixCallPcmBase64":{"path":"assets/data/phoenix-call.wav","type":"audio/wav","bytes":218924,"sha256":"24f281fb30443148067c745f3eff6a829d16ad01608aa5dc9e33c2d09d60a593"},"initial/loveRosePhoto":{"path":"assets/images/love-rose-photo.webp","type":"image/webp","bytes":1062484,"sha256":"b743c23f5ef7e61d4ce3098d6dd7c56aa5007b05dc2feef7aecfb749776c3d98"},"source/index.html":{"path":"source/index.html","type":"text/plain","bytes":55988,"sha256":"c385933ff35fc357e84c9d9fd759a7b6b8e030f78517bbb8659cc68ed82e5dfc"},"source/project.json":{"path":"source/project.json","type":"application/json","bytes":2876,"sha256":"e4a3edc3e5076188a657e1b61124cbc0417c62a6a9ca9eab320e8f365bf0aa91"},"source/package.json":{"path":"source/package.json","type":"application/json","bytes":588,"sha256":"b5062cc5cae566ce5b29a23f26501e632d8477410b6d11483e10f16218c113b1"},"source/package-lock.json":{"path":"source/package-lock.json","type":"application/json","bytes":16958,"sha256":"3fedfcd53405969443bfc60ecf9e6e8ceb25bbba18a135078894565251910b10"},"source/README.md":{"path":"source/README.md","type":"text/plain","bytes":3145,"sha256":"cf71baf0103ec0ee0b812443f232ef537f2cccdf1c529da7e89c5fe30e17f0ca"},"source/LICENSE":{"path":"source/LICENSE","type":"text/plain","bytes":1087,"sha256":"9bdd06a4c8ba4bbc447fc893f7263c5853fe6eeddb4d64490abe8750053254f8"},"source/.gitignore":{"path":"source/gitignore.txt","type":"text/plain","bytes":39,"sha256":"743205fbd19c39475577e072eb7ea1f66ffb16cca4fe134d76bb4206234015be"},"source/scripts/build.mjs":{"path":"source/scripts/build.mjs","type":"text/javascript","bytes":9119,"sha256":"ca6aabe25bc51f5b901682faa474c07cb3eaf302df7cb59c92342bc754d93293"},"source/assets/licenses.json":{"path":"source/assets/licenses.json","type":"application/json","bytes":6820,"sha256":"22def10f3ea9a50a9bb5aa964879ab258390bc771955af792911656f0b3f463b"},"source/assets/vendor/mediapipe/LICENSE":{"path":"source/assets/vendor/mediapipe/LICENSE","type":"text/plain","bytes":11358,"sha256":"cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"},"source/assets/vendor/three/LICENSE":{"path":"source/assets/vendor/three/LICENSE","type":"text/plain","bytes":1081,"sha256":"bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"},"source/src/audio.js":{"path":"source/src/audio.js","type":"text/javascript","bytes":33731,"sha256":"eac882666fc2a491239397c68c4e67d5d3a4e8e01ffff4fc74c3c13743111258"},"source/src/boot.js":{"path":"source/src/boot.js","type":"text/javascript","bytes":1975,"sha256":"7fb0784cd217c4bcaf4ef39667de0498fd4b09d90ecb8cbe39ec20276c7cb63a"},"source/src/main.js":{"path":"source/src/main.js","type":"text/javascript","bytes":505682,"sha256":"51e290ff7cc4d1b22414f802cbe0dfc05888ada759605d38edd7b89b373a82d2"},"source/src/rose-renderer.js":{"path":"source/src/rose-renderer.js","type":"text/javascript","bytes":40039,"sha256":"678917dfe060b93bd3bbdb46ec6dddb1a40d6c275c96973a6dbbe02dffa13a91"},"source/src/runtime/assets.js":{"path":"source/src/runtime/assets.js","type":"text/javascript","bytes":5732,"sha256":"b664ce0221b7bd8cb911a74133cc1078201adfe12054b31f4f2dadeef8f659f0"},"source/src/runtime/source-export.js":{"path":"source/src/runtime/source-export.js","type":"text/javascript","bytes":1809,"sha256":"70050ebcdb3f2fc99afa8fcbe56ef3b3a940b3ec1fbdde0213be84dfb45eba3e"},"source/src/shows/dragon/attack.js":{"path":"source/src/shows/dragon/attack.js","type":"text/javascript","bytes":12173,"sha256":"dc0bd54a73f4faeb2c3321c253f5e568d7b5f8dc6f98e47dd25c2b0683372602"},"source/src/shows/dragon/camera.js":{"path":"source/src/shows/dragon/camera.js","type":"text/javascript","bytes":1556,"sha256":"8524b5f7dcf1460f6ca23303d11a874fab63de47afecb182699416c691a67f13"},"source/src/shows/dragon/celestial.js":{"path":"source/src/shows/dragon/celestial.js","type":"text/javascript","bytes":15007,"sha256":"a053399374e3cbcc610d964a1824c8492bf931af1fc763f510e0791a7106f40d"},"source/src/shows/dragon/fireworks.js":{"path":"source/src/shows/dragon/fireworks.js","type":"text/javascript","bytes":10598,"sha256":"128eae1c7c8a346ec0711abf613c409a35438abf2e24f79aa6ba9cbc78dd58c4"},"source/src/shows/dragon/impact.js":{"path":"source/src/shows/dragon/impact.js","type":"text/javascript","bytes":13253,"sha256":"813569431f7d921b8af040a96ab6a4fc1eedc8c25f8a331679dc311cca9f5cd9"},"source/src/shows/dragon/index.js":{"path":"source/src/shows/dragon/index.js","type":"text/javascript","bytes":19052,"sha256":"536d6389c3cd886af583bb0acb5fa9f3b28088cea0a1d693d94471d1f2af2892"},"source/src/shows/dragon/pipeline.js":{"path":"source/src/shows/dragon/pipeline.js","type":"text/javascript","bytes":9074,"sha256":"eee16f4f1632fde00c8729f462be615b48a1ca45f61e7461d475816b32c8c5d3"},"source/src/shows/dragon/stage.js":{"path":"source/src/shows/dragon/stage.js","type":"text/javascript","bytes":11393,"sha256":"044dc1e0d975d97c5c183f00e65263325fc9c2e0d3683436da493deb415db77a"},"source/src/shows/phoenix/camera.js":{"path":"source/src/shows/phoenix/camera.js","type":"text/javascript","bytes":5273,"sha256":"c0185ed9bc3da72a7dc1ed74dffeda7ee5c99d2b7ae23359927490d69365ca26"},"source/src/shows/phoenix/fireworks.js":{"path":"source/src/shows/phoenix/fireworks.js","type":"text/javascript","bytes":16563,"sha256":"82c7ed4ee25dade92680973a3c92fb2393c39266cef19d5a358359b06eb0f32d"},"source/src/shows/phoenix/index.js":{"path":"source/src/shows/phoenix/index.js","type":"text/javascript","bytes":8894,"sha256":"f4cde9e945aa569c31bfc38dc0ea442f3e6b7692f257ae1f452160cb20433fb9"},"source/src/shows/phoenix/stage.js":{"path":"source/src/shows/phoenix/stage.js","type":"text/javascript","bytes":20548,"sha256":"e00055b5e927ea0be7676662b81f95ca91cd89d9a42cbfb50b943875d5b128ef"},"source/src/shows/phoenix2d/effects.js":{"path":"source/src/shows/phoenix2d/effects.js","type":"text/javascript","bytes":23369,"sha256":"3da9aefcc040f0111aaed96b4388268e89b9482cccbde3c62ee23435b9117c28"},"source/src/shows/phoenix2d/index.js":{"path":"source/src/shows/phoenix2d/index.js","type":"text/javascript","bytes":10679,"sha256":"80d3d58c25682aef7bc3f768c09369a3e1553829c1b030cc5604e9ddb2b15a08"},"source/src/shows/phoenix2d/rig.js":{"path":"source/src/shows/phoenix2d/rig.js","type":"text/javascript","bytes":16195,"sha256":"f8ee628e4a1f0d48dc24f33d3859ce17484863468930a4516becb1be94f27da9"},"source/src/style.css":{"path":"source/src/style.css","type":"text/plain","bytes":68380,"sha256":"1628bf6c641cd3fe704d0a101d0e589622073037be1db5981032bd792e184cb3"},"source/vendor/three/build/three.core.js":{"path":"source/vendor/three/build/three.core.js","type":"text/javascript","bytes":1403455,"sha256":"eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20"},"source/vendor/three/build/three.module.js":{"path":"source/vendor/three/build/three.module.js","type":"text/javascript","bytes":603113,"sha256":"ee771d737300363eee549d217368b05c2965c943c51ec24755b80a3d85ee4088"},"source/vendor/three/examples/jsm/loaders/GLTFLoader.js":{"path":"source/vendor/three/examples/jsm/loaders/GLTFLoader.js","type":"text/javascript","bytes":114764,"sha256":"ad215c709e143c9146858cbb62ffefb1d38fd0a7b41dd28d8f064cb88e4c4086"},"source/vendor/three/examples/jsm/utils/BufferGeometryUtils.js":{"path":"source/vendor/three/examples/jsm/utils/BufferGeometryUtils.js","type":"text/javascript","bytes":35564,"sha256":"d982a1a7e75a5a0b118de685c66a89e67ff9deeb83d6846809e4519074eef011"},"source/vendor/three/LICENSE":{"path":"source/vendor/three/LICENSE","type":"text/plain","bytes":1081,"sha256":"bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"},"source/docs/ASSETS.md":{"path":"source/docs/ASSETS.md","type":"text/plain","bytes":4330,"sha256":"fa63e0a27a719ffcae33cfaafc8f73a3f6c842d39bc6354fdcd242e100be8586"},"source/tests/contracts.test.mjs":{"path":"source/tests/contracts.test.mjs","type":"text/javascript","bytes":2985,"sha256":"3d3ec55c7477c900bc9d91b43dc9e700802d5a7c34a7540f7a528a066ad165d2"},"source/tests/dragon-browser.html":{"path":"source/tests/dragon-browser.html","type":"text/plain","bytes":2533,"sha256":"7d2e4c853fe1c2e1ec00dd7efd8d59f88302e42c92dd7aa21a85d1bc5097ed9d"},"source/tests/legacy-regression.cjs":{"path":"source/tests/legacy-regression.cjs","type":"text/plain","bytes":176212,"sha256":"42e3084bc682ba79c1bd2345b7f30677c8975236b579b0e85f6bbcdb6677959a"}},"sourceFiles":{"assets/models/phoenix-rig-v16.webp.glb":"phoenix-3d-review/phoenix-rig-v16.glb","assets/images/rig-flight.webp":"phoenix-review/rig-flight.png","assets/images/rig-upright.webp":"phoenix-review/rig-upright.png","assets/images/rig-feathers.webp":"phoenix-review/rig-feathers.png","assets/models/dragon-show-v14.webp.glb":"dragon-3d-review/dragon-show-v14.glb","assets/data/show-foot-motion-v14.json":"dragon-3d-review/show-foot-motion-v14.json","assets/audio/theatre-music-v27.flac":"dragon-3d-review/theatre-music-v27.wav","assets/audio/theatre-effects-v30-glass.flac":"dragon-3d-review/theatre-effects-v29.wav","assets/audio/music/moonlight.mp3":"fireworks-audio/moonlight.mp3","assets/audio/music/hope.mp3":"fireworks-audio/hope.mp3","assets/audio/music/computations.mp3":"fireworks-audio/computations.mp3","assets/audio/music/reverie.mp3":"fireworks-audio/reverie.mp3","assets/audio/music/childhood.mp3":"fireworks-audio/childhood.mp3","assets/audio/music/celestial.mp3":"fireworks-audio/celestial.mp3","assets/audio/music/titan.mp3":"fireworks-audio/titan.mp3","assets/audio/music/signal.mp3":"fireworks-audio/signal.mp3","assets/audio/music/snowfall.mp3":"fireworks-audio/snowfall.mp3","assets/vendor/mediapipe/vision_bundle.mjs":"vision/vision_bundle.mjs","assets/vendor/mediapipe/wasm/vision_wasm_internal.js":"vision/wasm/vision_wasm_internal.js","assets/vendor/mediapipe/wasm/vision_wasm_internal.wasm":"vision/wasm/vision_wasm_internal.wasm","assets/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.js":"vision/wasm/vision_wasm_nosimd_internal.js","assets/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.wasm":"vision/wasm/vision_wasm_nosimd_internal.wasm","assets/vendor/mediapipe/hand_landmarker.task":"vision/hand_landmarker.task","assets/data/accepted-rose-asset.json":"initial/acceptedRoseAsset","assets/data/firework-samples-v25.json":"initial/fireworkSamplesV25","assets/data/phoenix-call.wav":"initial/phoenixCallPcmBase64","assets/images/love-rose-photo.webp":"initial/loveRosePhoto","index.html":"source/index.html","project.json":"source/project.json","package.json":"source/package.json","package-lock.json":"source/package-lock.json","README.md":"source/README.md","LICENSE":"source/LICENSE",".gitignore":"source/.gitignore","scripts/build.mjs":"source/scripts/build.mjs","assets/licenses.json":"source/assets/licenses.json","assets/vendor/mediapipe/LICENSE":"source/assets/vendor/mediapipe/LICENSE","assets/vendor/three/LICENSE":"source/assets/vendor/three/LICENSE","src/audio.js":"source/src/audio.js","src/boot.js":"source/src/boot.js","src/main.js":"source/src/main.js","src/rose-renderer.js":"source/src/rose-renderer.js","src/runtime/assets.js":"source/src/runtime/assets.js","src/runtime/source-export.js":"source/src/runtime/source-export.js","src/shows/dragon/attack.js":"source/src/shows/dragon/attack.js","src/shows/dragon/camera.js":"source/src/shows/dragon/camera.js","src/shows/dragon/celestial.js":"source/src/shows/dragon/celestial.js","src/shows/dragon/fireworks.js":"source/src/shows/dragon/fireworks.js","src/shows/dragon/impact.js":"source/src/shows/dragon/impact.js","src/shows/dragon/index.js":"source/src/shows/dragon/index.js","src/shows/dragon/pipeline.js":"source/src/shows/dragon/pipeline.js","src/shows/dragon/stage.js":"source/src/shows/dragon/stage.js","src/shows/phoenix/camera.js":"source/src/shows/phoenix/camera.js","src/shows/phoenix/fireworks.js":"source/src/shows/phoenix/fireworks.js","src/shows/phoenix/index.js":"source/src/shows/phoenix/index.js","src/shows/phoenix/stage.js":"source/src/shows/phoenix/stage.js","src/shows/phoenix2d/effects.js":"source/src/shows/phoenix2d/effects.js","src/shows/phoenix2d/index.js":"source/src/shows/phoenix2d/index.js","src/shows/phoenix2d/rig.js":"source/src/shows/phoenix2d/rig.js","src/style.css":"source/src/style.css","vendor/three/build/three.core.js":"source/vendor/three/build/three.core.js","vendor/three/build/three.module.js":"source/vendor/three/build/three.module.js","vendor/three/examples/jsm/loaders/GLTFLoader.js":"source/vendor/three/examples/jsm/loaders/GLTFLoader.js","vendor/three/examples/jsm/utils/BufferGeometryUtils.js":"source/vendor/three/examples/jsm/utils/BufferGeometryUtils.js","vendor/three/LICENSE":"source/vendor/three/LICENSE","docs/ASSETS.md":"source/docs/ASSETS.md","tests/contracts.test.mjs":"source/tests/contracts.test.mjs","tests/dragon-browser.html":"source/tests/dragon-browser.html","tests/legacy-regression.cjs":"source/tests/legacy-regression.cjs"}}</script><script defer src="app.js"></script>
   </body>
 </html>
