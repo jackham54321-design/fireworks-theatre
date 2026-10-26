@@ -4,9 +4,23 @@ import { exportSource } from "./runtime/source-export.js";
 
 const manifest = window.__THEATRE_MANIFEST__;
 const assets = createAssetLoader(manifest);
+const offlineEdition = manifest.edition === "offline";
+if (!offlineEdition) {
+  document.getElementById("editionTitle").textContent = "关于与下载";
+  document.getElementById("editionDescription").textContent =
+    "所有演出与互动均可直接体验。也可下载完整离线 HTML，保存后离线观看，并导出工程继续编辑。";
+  document.getElementById("exportSourceBtn").textContent = "下载完整离线 HTML";
+}
 document
   .getElementById("exportSourceBtn")
   .addEventListener("click", async (event) => {
+    if (!offlineEdition) {
+      const link = document.createElement("a");
+      link.href = new URL(manifest.offlineDownloadUrl, document.baseURI).href;
+      link.download = "fireworks-theatre.html";
+      link.click();
+      return;
+    }
     const button = event.currentTarget;
     const status = document.getElementById("sourceExportStatus");
     button.disabled = true;

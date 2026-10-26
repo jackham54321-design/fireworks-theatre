@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 import { createHash } from "node:crypto";
-import { Script } from 'node:vm';
+import { Script } from "node:vm";
 import { parse } from "@babel/parser";
 import { build, transform } from "esbuild";
 import { exportSource } from "../src/runtime/source-export.js";
@@ -109,7 +109,7 @@ const editable = [
 for (const file of [...new Set(editable)]) {
   const key = "source/" + file;
   files.set(key, {
-    path: "source/" + (file === '.gitignore' ? 'gitignore.txt' : file),
+    path: "source/" + (file === ".gitignore" ? "gitignore.txt" : file),
     type: mime[path.extname(file)] || "text/plain",
     data: await fs.readFile(path.join(root, file)),
   });
@@ -178,17 +178,35 @@ const loading =
 const safeJSON = (value) => JSON.stringify(value).replaceAll("<", "\\u003c");
 const manifestScript = (value) =>
   "<script>window.__THEATRE_MANIFEST__=" + safeJSON(value) + "</script>";
+const webManifest = {
+  ...manifest,
+  edition: "web",
+  offlineDownloadUrl: "downloads/fireworks-theatre.html",
+  resources: Object.fromEntries(
+    Object.entries(manifest.resources).filter(
+      ([key]) => !key.startsWith("source/"),
+    ),
+  ),
+};
+delete webManifest.sourceFiles;
 const html = shell
-  .replace("<!-- THEATRE_STYLE -->", () => '<link rel="stylesheet" href="app.css">')
+  .replace(
+    "<!-- THEATRE_STYLE -->",
+    () => '<link rel="stylesheet" href="app.css">',
+  )
   .replace(
     "<!-- THEATRE_BOOT -->",
-    () => loading + manifestScript(manifest) + '<script defer src="app.js"></script>',
+    () =>
+      loading +
+      manifestScript(webManifest) +
+      '<script defer src="app.js"></script>',
   );
 await fs.writeFile(path.join(output, "index.html"), html);
 await fs.writeFile(path.join(output, "app.js"), script);
 await fs.writeFile(path.join(output, "app.css"), style);
 const embedded = structuredClone(manifest),
   blocks = [];
+embedded.edition = "offline";
 let packedBytes = 0;
 for (const [key, item] of files) {
   const zipped = key.startsWith("fireworks-audio/")
@@ -212,7 +230,8 @@ const offline = shell
   .replace("<!-- THEATRE_STYLE -->", () => "<style>" + style + "</style>")
   .replace(
     "<!-- THEATRE_BOOT -->",
-    () => loading +
+    () =>
+      loading +
       blocks.join("\n") +
       manifestScript(embedded) +
       "<script>" +
@@ -221,10 +240,19 @@ const offline = shell
   );
 const offlinePath = path.join(release, "烟花剧场.html");
 // String replacement callbacks preserve minified `$&` identifiers verbatim.
-const inline=offline.slice(offline.lastIndexOf('<script>')+8,offline.lastIndexOf('</script>'));
-if(inline!==script.replaceAll('</script','<\\/script')) throw new Error('Inline script changed during HTML assembly');
-new Script(inline,{filename:'offline-app.js'});
+const inline = offline.slice(
+  offline.lastIndexOf("<script>") + 8,
+  offline.lastIndexOf("</script>"),
+);
+if (inline !== script.replaceAll("</script", "<\\/script"))
+  throw new Error("Inline script changed during HTML assembly");
+new Script(inline, { filename: "offline-app.js" });
 await fs.writeFile(offlinePath, offline);
+await fs.mkdir(path.join(output, "downloads"), { recursive: true });
+await fs.writeFile(
+  path.join(output, "downloads/fireworks-theatre.html"),
+  offline,
+);
 const archive = await exportSource(
   sourceFiles,
   async (key) => files.get(key).data,
@@ -249,6 +277,8 @@ const report = {
   resourceBytes: [...files.values()].reduce((n, f) => n + f.data.length, 0),
   packedBytes,
   resources: manifest.resources,
+  webResources: webManifest.resources,
+  offlineDownloadPath: "downloads/fireworks-theatre.html",
 };
 await fs.writeFile(
   path.join(release, "build-report.json"),
